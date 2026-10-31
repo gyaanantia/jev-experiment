@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "report",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-I", "-m", "http.server", "8765", "--bind", "127.0.0.1", "--directory", "/Users/gyaanantia/L2/report"],
+      "port": 8765
+    },
+    {
+      "name": "demo",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "--directory", "/Users/gyaanantia/L2", "python", "-I", "scripts/70_demo.py"],
+      "port": 8770,
+      "url": "http://127.0.0.1:8770"
+    }
+  ]
+}

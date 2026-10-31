@@ -1,0 +1,64 @@
+{
+  "frozen_at": "2026-10-30",
+  "jev": {
+    "model": "jev-1.14.0",
+    "packing": "fanout",
+    "wording_id": "W2",
+    "wording": "Does `candidate_column` hold the same attribute as `source_column`?",
+    "criteria": {
+      "true": "Both columns record the same property of the same kind of entity; names, abbreviations and value formats may differ.",
+      "false": "The columns record different properties, even if their names or values look similar."
+    },
+    "n_values": 10,
+    "max_len": 60,
+    "seed": 42,
+    "concurrency": 32,
+    "selection": "W0-W3 run once each on the 24 dev pairs in hybrid mode at N=10; W2 had the highest mean expected Recall@GT (0.994; W1 0.979, W3 0.971, W0 0.934). N in {5,10,25} run with W2 in hybrid mode; N=10 highest (0.994; N=5 0.991, N=25 0.985).",
+    "deviations_from_spec": [
+      "Sample-size sweep ran in hybrid mode only (budget). Instance mode uses the same N.",
+      "N=50 was not run: N=25 was already below N=10.",
+      "Stability repeats (runs 2 and 3) run in hybrid mode only (budget). Schema and instance modes have one dev run."
+    ]
+  },
+  "haiku": {
+    "model": "claude-haiku-5-5",
+    "mode": "hybrid",
+    "wording_id": "W2",
+    "n_values": 10,
+    "max_len": 60,
+    "effort": "low",
+    "thinking": "disabled",
+    "selection": "Dev split, W2 wording, N=10, effort low: thinking disabled 0.9014 vs adaptive 0.9019 mean expected Recall@GT (tie within noise); cost tie-breaker -> disabled."
+  },
+  "baselines": {
+    "valentine_version": "1.1.0",
+    "instance_sample_size": 1000,
+    "instance_sample_size_note": "Package default. The paper's matchers read all rows; a dev-split sensitivity run uses all rows for the 3 instance matchers.",
+    "params": {
+      "coma_instance": {},
+      "coma_schema": {},
+      "cupid": {
+        "leaf_w_struct": 0.6,
+        "th_accept": 0.4,
+        "w_struct": 0.6
+      },
+      "distribution_based": {
+        "threshold1": 0.2,
+        "threshold2": 0.2
+      },
+      "jaccard_levenshtein": {
+        "threshold_dist": 0.7
+      },
+      "similarity_flooding": {}
+    },
+    "dev_recall_gt": {
+      "coma_instance": 0.7535,
+      "coma_schema": 0.8019,
+      "cupid": 0.587,
+      "distribution_based": 0.2899,
+      "jaccard_levenshtein": 0.4743,
+      "similarity_flooding": 0.6593
+    },
+    "selection": "Grid over paper Table II ranges on the 24 dev pairs (1,000-row sample); highest mean expected Recall@GT, median wall time as tie-breaker."
+  }
+}

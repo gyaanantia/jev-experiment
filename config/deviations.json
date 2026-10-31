@@ -1,0 +1,11 @@
+[
+  "Valentine matchers use the package's default 1,000-row sample instead of all rows. All rows are slower: on the dev pairs, all-row COMA (instance) and Distribution-based runs did not finish within 1,800 s on 8 and 6 of 24 pairs, and finished runs took 9 to 59 times longer. All rows are also more accurate: on the dev pairs where both runs finished, mean Recall@GT rose by 0.03 (COMA instance), 0.12 (Distribution-based) and 0.03 (Jaccard-Levenshtein). Test-set numbers for these three matchers are therefore somewhat low; see the 1,000-row vs all-rows table under Method & validity (data.json -> full_rows_dev).",
+  "The sample-size sweep (N = 5, 10, 25) ran in hybrid mode only; N = 50 was skipped because N = 25 already scored below N = 10. Instance mode uses the same N.",
+  "Stability repeats (runs 2 and 3) ran in hybrid mode only, to stay within the $10 Jev budget.",
+  "Ground-truth fix: two WikiData mapping files name a source column `givenName`, which does not exist; the table column is `givenNameLabel`. The corrected name is used for every method.",
+  "Pilot pairs were re-run with the frozen setup and are part of the test set; their pilot answers are not used.",
+  "The pilot used question wording W0 (before tuning); all test numbers use the frozen wording W2.",
+  "DistributionBased: the CBC solver bundled with PuLP 4.2.0 (cbcbox 2.929, a development build) aborts in its nauty symmetry step on some problems. When that happens, the run is retried once with CBC orbital branching off (`-Orbit off`), which changes the search but not the optimization problem. Affected runs carry cbc_orbit_off = true; their wall time includes the failed first attempt.",
+  "DistributionBased: grid configs with threshold1 >= 0.3 hit the 600 s per-run limit on 1 to 5 Open Data dev pairs, so the freeze rule (complete on all 24 dev pairs) excluded them.",
+  "COMA-Instance runs the schema matchers plus the TF-IDF instance matcher (use_schema=True, use_instances=True), as the paper's COMA 3.0 instance strategy and the package README do. An earlier instance-only setting scored 0.31 mean Recall@GT on dev versus 0.75 for this one; those runs are kept in runs/dev/coma_instance_only.jsonl and are not used."
+]

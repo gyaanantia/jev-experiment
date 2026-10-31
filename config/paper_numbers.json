@@ -1,0 +1,74 @@
+{
+  "citation": "Koutras et al., Valentine: Evaluating Matching Techniques for Dataset Discovery, ICDE 2021, pp. 468-479, DOI 10.1109/ICDE51399.2021.00047",
+  "method_codes": {
+    "CU": "cupid", "SF": "similarity_flooding", "COS": "coma_schema", "COI": "coma_instance",
+    "DB": "distribution_based", "JL": "jaccard_levenshtein", "EDI": "embdi", "SP": "semprop"
+  },
+  "table_iv": {
+    "source": "Table IV, p. 477: Recall at size of ground truth for the Magellan and ING Data",
+    "exact": true,
+    "columns": ["Magellan", "ING#1", "ING#2"],
+    "rows": {
+      "cupid": [1, 0.714, 0.5],
+      "similarity_flooding": [1, 0.357, 0.439],
+      "coma_schema": [1, 0.786, 0.121],
+      "coma_instance": [1, 0.786, 0.136],
+      "distribution_based": [0.54, 0.857, 0.879],
+      "jaccard_levenshtein": [0.787, 0.786, 0.621],
+      "embdi": [0.818, 0.714, 0.227]
+    }
+  },
+  "table_v": {
+    "source": "Table V, p. 478: Average runtime per experiment (i.e., table pair) in seconds",
+    "exact": true,
+    "hardware": "Two 80-core Linux VMs, 320 GB RAM each (Sec. VII-C, p. 478); ING experiments excluded",
+    "seconds": {
+      "cupid": 9.64, "similarity_flooding": 7.09, "coma_schema": 1.67, "coma_instance": 318.07,
+      "distribution_based": 71.16, "semprop": 735.25, "embdi": 4817.87, "jaccard_levenshtein": 522.94
+    }
+  },
+  "fig4": {
+    "source": "Fig. 4, p. 476: schema-based methods, noisy schemata only (fabricated pairs: TPC-DI, Open Data, ChEMBL)",
+    "exact": false,
+    "note": "Medians read by eye from the box plots (about +/-0.02). Verbatim schemata omitted in the paper because all schema-based methods place all correct matches on top (Sec. VII-A4, p. 476).",
+    "median": {
+      "Unionable": {"cupid": 0.40, "similarity_flooding": 0.64, "coma_schema": 0.57},
+      "View-Unionable": {"cupid": 0.45, "similarity_flooding": 0.54, "coma_schema": 0.54},
+      "Joinable": {"cupid": 0.45, "similarity_flooding": 0.55, "coma_schema": 0.53},
+      "Semantically-Joinable": {"cupid": 0.42, "similarity_flooding": 0.56, "coma_schema": 0.55}
+    }
+  },
+  "fig5": {
+    "source": "Fig. 5, p. 476: instance-based methods, noisy vs verbatim instances (fabricated pairs)",
+    "exact": false,
+    "note": "Medians read by eye from the box plots (about +/-0.02). Joinable has verbatim instances only; Semantically-Joinable has noisy instances only (Sec. IV, p. 473).",
+    "median": {
+      "Unionable": {"distribution_based": {"noisy": 0.68, "verbatim": 0.70}, "jaccard_levenshtein": {"noisy": 0.59, "verbatim": 0.70}, "coma_instance": {"noisy": 0.80, "verbatim": 0.83}},
+      "View-Unionable": {"distribution_based": {"noisy": 0.19, "verbatim": 0.54}, "jaccard_levenshtein": {"noisy": 0.46, "verbatim": 0.73}, "coma_instance": {"noisy": 0.70, "verbatim": 0.81}},
+      "Joinable": {"distribution_based": {"verbatim": 1.0}, "jaccard_levenshtein": {"verbatim": 0.84}, "coma_instance": {"verbatim": 1.0}},
+      "Semantically-Joinable": {"distribution_based": {"noisy": 0.51}, "jaccard_levenshtein": {"noisy": 0.54}, "coma_instance": {"noisy": 0.69}}
+    }
+  },
+  "fig6": {
+    "source": "Fig. 6, p. 477: hybrid methods, noisy vs verbatim instances/schemata (fabricated pairs)",
+    "exact": false,
+    "note": "Medians read by eye from the box plots (about +/-0.02).",
+    "median": {
+      "Unionable": {"embdi": {"noisy": 0.55, "verbatim": 0.61}, "semprop": {"noisy": 0.0, "verbatim": 0.26}},
+      "View-Unionable": {"embdi": {"noisy": 0.29, "verbatim": 0.51}, "semprop": {"noisy": 0.0, "verbatim": 0.29}},
+      "Joinable": {"embdi": {"noisy": 0.67, "verbatim": 0.69}, "semprop": {"noisy": 0.0, "verbatim": 0.22}},
+      "Semantically-Joinable": {"embdi": {"noisy": 0.37}, "semprop": {"noisy": 0.0}}
+    }
+  },
+  "fig7": {
+    "source": "Fig. 7, p. 477: effectiveness on WikiData (one pair per scenario)",
+    "exact": false,
+    "note": "Bar heights read by eye; snapped to multiples of 1/|GT| (|GT| = 20, 6, 6, 8), which the readings match.",
+    "values": {
+      "Unionable": {"distribution_based": 0.75, "jaccard_levenshtein": 0.85, "coma_instance": 0.85, "embdi": 0.85, "cupid": 0.55, "similarity_flooding": 0.65, "coma_schema": 0.60},
+      "View-Unionable": {"distribution_based": 0.333, "jaccard_levenshtein": 0.833, "coma_instance": 0.833, "embdi": 0.5, "cupid": 0.667, "similarity_flooding": 0.667, "coma_schema": 0.667},
+      "Joinable": {"distribution_based": 1.0, "jaccard_levenshtein": 1.0, "coma_instance": 1.0, "embdi": 1.0, "cupid": 0.5, "similarity_flooding": 0.667, "coma_schema": 0.667},
+      "Semantically-Joinable": {"distribution_based": 0.625, "jaccard_levenshtein": 0.75, "coma_instance": 1.0, "embdi": 0.75, "cupid": 0.625, "similarity_flooding": 0.75, "coma_schema": 0.625}
+    }
+  }
+}

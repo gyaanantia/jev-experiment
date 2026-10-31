@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev on Valentine</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --surface-2: #f3f2ee;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+  --jev: #2a78d6; --haiku: #eb6834; --valentine: #1baf7a; --paper: #52514e;
+  --seq-0: #f3f2ee; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec; --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  /* text / ring color on top of each --seq step (white on the dark steps, near-black on the light ones) */
+  --on-seq-0: #0b0b0b; --on-seq-1: #0b0b0b; --on-seq-2: #0b0b0b; --on-seq-3: #0b0b0b; --on-seq-4: #0b0b0b; --on-seq-5: #ffffff; --on-seq-6: #ffffff; --on-seq-7: #ffffff;
+  --good: #006300; --bad: #d03b3b; --focus: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --surface-2: #232321;
+    --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --jev: #3987e5; --haiku: #d95926; --valentine: #199e70; --paper: #c3c2b7;
+    --seq-0: #232321; --seq-1: #0d366b; --seq-2: #104281; --seq-3: #184f95; --seq-4: #256abf; --seq-5: #3987e5; --seq-6: #6da7ec; --seq-7: #b7d3f6;
+    --on-seq-0: #f0efec; --on-seq-1: #f0efec; --on-seq-2: #f0efec; --on-seq-3: #f0efec; --on-seq-4: #f0efec; --on-seq-5: #0b0b0b; --on-seq-6: #0b0b0b; --on-seq-7: #0b0b0b;
+    --good: #0ca30c; --bad: #e66767; --focus: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --surface-2: #232321;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+  --jev: #3987e5; --haiku: #d95926; --valentine: #199e70; --paper: #c3c2b7;
+  --seq-0: #232321; --seq-1: #0d366b; --seq-2: #104281; --seq-3: #184f95; --seq-4: #256abf; --seq-5: #3987e5; --seq-6: #6da7ec; --seq-7: #b7d3f6;
+  --on-seq-0: #f0efec; --on-seq-1: #f0efec; --on-seq-2: #f0efec; --on-seq-3: #f0efec; --on-seq-4: #f0efec; --on-seq-5: #0b0b0b; --on-seq-6: #0b0b0b; --on-seq-7: #0b0b0b;
+  --good: #0ca30c; --bad: #e66767; --focus: #3987e5;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1320px; margin: 0 auto; padding: 0 32px 120px; }
+section { min-height: 100vh; padding: 72px 0 40px; border-bottom: 1px solid var(--grid); scroll-margin-top: 0; }
+section:last-of-type { border-bottom: 0; }
+h1 { font-size: 52px; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+h2 { font-size: 36px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+h3 { font-size: 22px; margin: 36px 0 8px; }
+p { max-width: 74ch; margin: 0 0 14px; }
+.kicker { color: var(--muted); font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.lede { font-size: 22px; color: var(--ink-2); max-width: 64ch; }
+.note { color: var(--ink-2); font-size: 15px; }
+.muted { color: var(--muted); }
+code, pre { font: 14px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+pre { background: var(--surface-2); padding: 14px 16px; border-radius: 8px; overflow: auto; max-height: 420px; margin: 0; white-space: pre-wrap; word-break: break-word; }
+.card { background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 20px 22px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 20px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 28px 0; }
+.tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 18px 20px; }
+.tile .label { color: var(--ink-2); font-size: 15px; }
+.tile .value { font-size: 44px; font-weight: 600; line-height: 1.1; margin: 6px 0 4px; }
+.tile .sub { color: var(--muted); font-size: 14px; }
+.hero { font-size: 64px; font-weight: 600; line-height: 1; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--ink-2); font-weight: 600; font-size: 14px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.card table { font-size: 15px; }
+#costTable td:first-child, #costTable th:first-child { white-space: nowrap; }
+/* keep "this run / ≈paper" on one line at 1280 px without squeezing the method column */
+#wikiTable td, #wikiTable th { padding-left: 6px; padding-right: 6px; }
+#wikiTable td.num { white-space: nowrap; font-size: 13px; }
+main a { color: var(--ink); text-decoration-color: var(--muted); text-underline-offset: 3px; }
+main a:hover { text-decoration-color: var(--ink); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 18px 0 14px; }
+.controls label { font-size: 15px; color: var(--ink-2); display: flex; gap: 8px; align-items: center; }
+select, input[type=search], button { font: inherit; font-size: 15px; color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+button:hover { background: var(--surface-2); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--axis); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; border-right: 1px solid var(--axis); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed=true] { background: var(--ink); color: var(--surface); }
+.seg button.na:not([aria-pressed=true]) { color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--ink-2); margin: 6px 0 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; box-shadow: inset 0 0 0 1px var(--ring); }
+.sw.line { height: 2px; width: 14px; border-radius: 0; }
+.sw.tick { width: 3px; height: 14px; border-radius: 0; }
+.sw.ring { background: transparent !important; border: 2px solid var(--ink); }
+.sw.dot { width: 7px; height: 7px; border-radius: 50%; }
+.ramp { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; }
+.ramp i { display: inline-block; width: 16px; height: 12px; }
+.ramp i:first-of-type { border-radius: 3px 0 0 3px; } .ramp i:last-of-type { border-radius: 0 3px 3px 0; }
+svg { display: block; overflow: visible; }
+svg text { fill: var(--ink-2); font-size: 12px; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+svg .axis line, svg .axis path { stroke: var(--axis); }
+svg .gridline { stroke: var(--grid); stroke-width: 1; }
+svg .title { fill: var(--ink); font-size: 15px; font-weight: 600; }
+.cite { cursor: pointer; text-decoration: underline dotted var(--muted); text-underline-offset: 4px; }
+.cite:hover { text-decoration-color: var(--ink); }
+.citebtn { border: 0; background: none; padding: 0 2px; color: var(--muted); font-size: 13px; vertical-align: super; cursor: pointer; }
+.citebtn:hover { color: var(--ink); background: none; }
+#drawer { position: fixed; top: 0; right: 0; width: min(460px, 92vw); height: 100vh; background: var(--surface); border-left: 1px solid var(--ring); box-shadow: -8px 0 30px rgba(0,0,0,0.12); transform: translateX(105%); transition: transform 0.18s ease; z-index: 30; padding: 24px; overflow: auto; }
+#drawer.open { transform: none; }
+#drawer h4 { margin: 0 0 12px; font-size: 18px; }
+#drawer dl { margin: 0; font-size: 15px; }
+#drawer dt { color: var(--muted); font-size: 13px; margin-top: 12px; }
+#drawer dd { margin: 2px 0 0; word-break: break-word; }
+#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 8px; padding: 8px 10px; font-size: 14px; z-index: 40; display: none; max-width: 340px; }
+#tip .v { font-weight: 600; font-size: 16px; }
+#tip .k { color: var(--ink-2); }
+#nav { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 20; }
+#nav a { width: 10px; height: 10px; border-radius: 50%; background: var(--axis); display: block; }
+#nav a.on { background: var(--ink); }
+#topbar { position: fixed; top: 12px; right: 18px; display: flex; gap: 8px; z-index: 25; }
+#keys { position: fixed; left: 18px; bottom: 14px; font-size: 13px; color: var(--muted); transition: opacity 0.2s; }
+#keys.hide { opacity: 0; pointer-events: none; }
+kbd { font: 12px ui-monospace, Menlo, monospace; border: 1px solid var(--axis); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; }
+.pill { display: inline-block; font-size: 13px; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+.heatwrap { overflow: auto; max-height: 72vh; border: 1px solid var(--ring); border-radius: 8px; background: var(--surface); }
+.heatwrap .empty { padding: 48px 24px; color: var(--muted); font-size: 15px; }
+.flex { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.scen { border-left: 3px solid var(--axis); padding-left: 14px; }
+.ok { color: var(--good); } .bad { color: var(--bad); }
+details summary { cursor: pointer; color: var(--ink-2); }
+/* below ~1400px the fixed Theme button and nav dots would sit on top of the right-hand cards: widen the side gutter, shrink the button to an icon */
+@media (max-width: 1400px) { main { padding-left: 56px; padding-right: 56px; } #topbar { right: 8px; top: 8px; } #themeBtn { font-size: 0; padding: 2px 7px; } #themeBtn::before { content: "◐"; font-size: 16px; } }
+@media (max-width: 700px) { main { padding: 0 16px 80px; } h1 { font-size: 36px; } .grid2 { grid-template-columns: 1fr; } #nav, #keys { display: none; } }
+@media print { #nav, #topbar, #keys, #drawer { display: none; } section { min-height: 0; } }
+</style>
+</head>
+<body>
+<div id="topbar">
+  <button id="themeBtn" title="Switch light / dark (T)">Theme</button>
+</div>
+<nav id="nav" aria-label="Sections"></nav>
+<div id="keys"><kbd>←</kbd> <kbd>→</kbd> sections · <kbd>T</kbd> theme · click any dotted number for its source</div>
+<div id="tip" role="tooltip"></div>
+<aside id="drawer" aria-label="Source of this number"><button id="drawerClose" style="float:right">Close</button><div id="drawerBody"></div></aside>
+
+<main>
+<section id="s-title" data-title="Title">
+  <div class="kicker">Talk report · generated <span id="gen"></span></div>
+  <h1>Can one yes/no question match database columns?</h1>
+  <p class="lede">We asked Jev, TypeSafe's System One model, "does this column hold the same attribute as that column?" for every column pair in the Valentine schema-matching benchmark (ICDE 2021). We then compared it with the paper's matchers, re-run on this machine, and with Claude Haiku 5.5.</p>
+  <div class="tiles" id="heroTiles"></div>
+  <p class="note">Every dotted number opens its source: a paper table or figure, or the result file, filter, and script that produced it. Headline numbers use test pairs only; the 24 pairs used to tune prompts and baseline settings are excluded.</p>
+  <p class="note"><a href="http://127.0.0.1:8770/">Live demo</a> · start <code>scripts/70_demo.py</code> first</p>
+</section>
+
+<section id="s-question" data-title="The question">
+  <div class="kicker">1 · The question</div>
+  <h2>Schema matching as thousands of yes/no questions</h2>
+  <p>Dataset discovery tools need to know which columns of two tables hold the same thing. Valentine (Koutras et al., ICDE 2021) scores matchers by how well they <em>rank</em> all source×target column pairs. The metric is <strong>Recall@ground truth</strong>: take the top <em>k</em> pairs, where <em>k</em> is the number of true matches, and count how many are correct.</p>
+  <p>Jev does not generate text. It takes a <em>state</em> and typed questions and returns one probability per question. A <strong>Noul</strong> question returns <code>noul</code>, the probability that the answer is yes. We send one request per source column. The state is that column; each target column becomes one Noul. Ranking all pairs by <code>noul</code> gives Valentine's output format.</p>
+  <div class="grid2" style="margin-top:22px">
+    <div class="card"><div class="kicker">One real request (excerpt)</div><pre id="exReq"></pre></div>
+    <div class="card"><div class="kicker">Jev's answers for that request</div><div id="exResp"></div><p class="note" id="exNote" style="margin-top:12px"></p></div>
+  </div>
+</section>
+
+<section id="s-setup" data-title="Setup">
+  <div class="kicker">2 · Setup</div>
+  <h2 id="setupTitle">561 table pairs, 10 methods, one frozen protocol</h2>
+  <h3>Data</h3>
+  <table id="dataTable"></table>
+  <p class="note" id="dataNote"></p>
+  <h3>Four relatedness scenarios (paper Sec. III)</h3>
+  <div class="grid4" id="scenCards"></div>
+  <h3>Methods</h3>
+  <table id="methodTable"></table>
+  <h3>Protocol</h3>
+  <div class="grid2">
+    <div class="card" id="protoCard"></div>
+    <div class="card"><div class="kicker">Tuning on the 24 dev pairs: question wording (Jev hybrid, N=10)</div><div id="wordingChart"></div><p class="note" id="wordingNote"></p></div>
+  </div>
+</section>
+
+<section id="s-accuracy" data-title="Accuracy">
+  <div class="kicker">3 · Accuracy</div>
+  <h2>Recall@ground truth on the generated pairs</h2>
+  <p class="note">Box = middle 50% of pairs, line = median, dot = mean, whiskers = 1.5×IQR. Generated test pairs from TPC-DI, Open Data and ChEMBL. Paper medians (≈, read from Figs. 4–6) appear as ticks when the slice matches the one the paper plotted. The paper groups COMA (instance) with the instance methods, but it also uses column names; Jev · instance-only sees values only.</p>
+  <div class="controls">
+    <label>Source <select id="accSource"><option value="">All three</option><option>TPC-DI</option><option>OpenData</option><option>ChEMBL</option></select></label>
+    <label>Slice <select id="accSlice">
+      <option value="all">All pairs</option>
+      <option value="schema_noise:noisy">Noisy schema (paper Fig. 4)</option>
+      <option value="schema_noise:verbatim">Verbatim schema</option>
+      <option value="instance_noise:noisy">Noisy values (paper Fig. 5/6)</option>
+      <option value="instance_noise:verbatim">Verbatim values (paper Fig. 5/6)</option>
+    </select></label>
+    <label><input type="checkbox" id="accPaper" checked> Paper medians</label>
+  </div>
+  <div class="legend" id="accLegend"></div>
+  <div class="grid2" id="accFacets"></div>
+  <p class="note" id="accCov" style="margin-top:12px"></p>
+  <h3>Curated pairs</h3>
+  <div class="grid2">
+    <div class="card"><div class="kicker">Magellan (7 pairs) vs paper Table IV</div><table id="magTable"></table></div>
+    <div class="card"><div class="kicker">WikiData (1 pair per scenario) vs paper Fig. 7</div><table id="wikiTable"></table></div>
+  </div>
+  <div class="card" style="margin-top:20px"><div class="kicker">NYU pairs (10, newer than the paper, LLM-perturbed)</div><table id="nyuTable"></table></div>
+  <h3>Other metrics</h3>
+  <table id="secTable"></table>
+</section>
+
+<section id="s-cost" data-title="Cost & latency">
+  <div class="kicker">4 · Cost and latency</div>
+  <h2>What one table pair costs, and how long it takes</h2>
+  <div class="controls"><div class="seg" id="clScope"><button aria-pressed="true" data-v="all">All non-dev pairs</button><button aria-pressed="false" data-v="haiku">Haiku subset (same pairs)</button></div></div>
+  <div class="grid2">
+    <div class="card"><div class="kicker">Accuracy vs wall-clock time per pair (log scale)</div><div class="legend" id="clLegend"></div><div id="clScatter"></div><p class="note" id="clNote"></p></div>
+    <div class="card"><div class="kicker">Cost per table pair</div><table id="costTable"></table><p class="note" id="costNote"></p></div>
+  </div>
+  <h3>Runtime against the paper's Table V</h3>
+  <div class="card"><div class="legend" id="t5Legend"></div><div id="t5Chart"></div><p class="note" id="t5Note"></p></div>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card"><div class="kicker">Packing: one request per column vs one per column pair (pilot)</div><table id="packTable"></table></div>
+    <div class="card"><div class="kicker">Sample values per column (dev, hybrid)</div><div id="sweepChart"></div><p class="note" id="sweepNote"></p></div>
+  </div>
+  <div class="card" style="margin-top:20px"><div class="kicker">Concurrency (pilot, Open Data pair, 38 requests)</div><table id="concTable"></table></div>
+</section>
+
+<section id="s-fail" data-title="Where Jev fails">
+  <div class="kicker">5 · Where Jev fails</div>
+  <h2>Breakdown by difficulty</h2>
+  <p class="note" id="diffNote">Mean Recall@GT on generated test pairs. Cell shade = value: </p>
+  <div id="diffTable" style="overflow-x:auto"></div>
+  <p class="note" id="diffCov" style="margin-top:10px"></p>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card"><div class="kicker">By number of true matches k</div><div id="kChart"></div><p class="note">With k = 1, one near-tie decides the whole score. Jev's small run-to-run jitter matters most here (see section 7).</p></div>
+    <div class="card"><div class="kicker">Lowest-scoring pairs for Jev hybrid (click to inspect)</div><table id="worstTable"></table></div>
+  </div>
+  <h3>Paired comparison with each baseline</h3>
+  <div style="overflow-x:auto"><table id="statsTable"></table></div>
+  <p class="note" id="statsNote"></p>
+</section>
+
+<section id="s-drill" data-title="Drill-down">
+  <div class="kicker">6 · Drill-down</div>
+  <h2>Every answer for one table pair</h2>
+  <div class="controls">
+    <label>Pair <input type="search" id="pairPick" list="pairList" size="48" placeholder="Type to search pairs"></label>
+    <datalist id="pairList"></datalist>
+    <div class="seg" id="modePick"></div>
+  </div>
+  <p id="pairInfo" class="note"></p>
+  <div class="legend" id="heatLegend"></div>
+  <div class="flex">
+    <div class="heatwrap" id="heat" style="flex:1 1 640px"></div>
+    <div class="card" style="flex:1 1 380px; max-width:520px"><div class="kicker">Exact question Jev received (click a cell)</div><pre id="cellReq">Click a cell in the grid.</pre><p id="cellAns" class="note" style="margin-top:10px"></p></div>
+  </div>
+</section>
+
+<section id="s-method" data-title="Method & validity">
+  <div class="kicker">7 · Method and validity</div>
+  <h2>How sure are these numbers?</h2>
+  <div class="grid2">
+    <div class="card"><div class="kicker">Run-to-run stability (3 identical runs, 24 dev pairs)</div><div id="stabBody"></div></div>
+    <div class="card"><div class="kicker">Ties</div><div id="tieBody"></div></div>
+  </div>
+  <div id="fullRows"></div>
+  <h3>Threats to validity</h3>
+  <ol id="threats"></ol>
+  <h3>Deviations from the plan, and data fixes</h3>
+  <ul id="devs"></ul>
+  <h3>Spend</h3>
+  <table id="ledgerTable"></table>
+  <h3>Reproduce</h3>
+  <pre id="repro"></pre>
+  <details style="margin-top:14px"><summary>Script checksums (SHA-256, first 12 hex)</summary><pre id="hashes"></pre></details>
+</section>
+</main>
+
+<script>
+/*__DATA__*/
+</script>
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const NS = "http://www.w3.org/2000/svg";
+const L = DATA.labels;
+const f2 = v => v == null ? "–" : (+v).toFixed(2);
+const f3 = v => v == null ? "–" : (+v).toFixed(3);
+const pct = v => v == null ? "–" : (100 * v).toFixed(1) + "%";
+const usd = v => v == null ? "–" : v === 0 ? "$0" : v < 0.01 ? "$" + v.toFixed(4) : "$" + v.toFixed(2);
+const usd4 = v => v == null ? "–" : v === 0 ? "$0" : "$" + (+v).toFixed(4);  // per-pair costs: same precision in every row
+const secs = v => v == null ? "–" : v < 1 ? v.toFixed(2) + " s" : v < 10 ? v.toFixed(1) + " s" : Math.round(v).toLocaleString() + " s";
+const tok = v => v == null ? "–" : Math.round(v).toLocaleString();
+
+function el(tag, attrs = {}, text) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "style") e.style.cssText = v; else e.setAttribute(k, v);
+  }
+  if (text != null) e.textContent = text;
+  return e;
+}
+function s(tag, attrs = {}, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (text != null) e.textContent = text;
+  return e;
+}
+function colorOf(m) {
+  if (m.startsWith("jev")) return "var(--jev)";
+  if (m.startsWith("haiku")) return "var(--haiku)";
+  return "var(--valentine)";
+}
+const GROUP = m => m.startsWith("jev") ? "Jev" : m.startsWith("haiku") ? "Haiku 5.5" : "Valentine matchers (re-run)";
+
+/* ---------- citations ---------- */
+function citeSpan(text, key, extra) {
+  const e = el("span", { class: "cite", tabindex: "0", role: "button", "data-cite": key }, text);
+  if (extra) e.dataset.extra = extra;
+  return e;
+}
+function openCite(key, extra) {
+  const c = DATA.cite[key];
+  const body = $("#drawerBody"); body.textContent = "";
+  body.append(el("h4", {}, c ? (c.kind === "paper" ? "From the Valentine paper" : c.kind === "price" ? "Price source" : "From this run") : "Source"));
+  const dl = el("dl");
+  const add = (k, v) => { if (v == null || v === "") return; dl.append(el("dt", {}, k), el("dd", {}, String(v))); };
+  if (!c) add("Key", key);
+  else {
+    add("What", c.text);
+    if (extra) add("This value", extra);
+    if (c.kind === "paper") { add("Citation", DATA.paper.citation); add("Exact value", c.exact ? "Yes, printed in the paper" : "No, read by eye from a plot (≈)"); add("Note", c.note); }
+    add("Result file", c.file); add("Filter", c.filter); add("Script", c.script);
+    // one checksum per script named (the field can list several, comma-separated)
+    if (c.script) add("Script SHA-256", c.script.split(",").map(p => { const nm = p.trim().split(/[:\s]/)[0]; const h = DATA.scripts[nm.replace("scripts/", "").replace("src/", "")]; return h ? `${h} (${nm})` : null; }).filter(Boolean).join(", "));
+    add("URL", c.url); add("Read on", c.read);
+  }
+  body.append(dl);
+  $("#drawer").classList.add("open"); $("#drawerClose").focus();
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-cite]");
+  if (t) { openCite(t.dataset.cite, t.dataset.extra); e.stopPropagation(); return; }
+  if (!e.target.closest("#drawer")) $("#drawer").classList.remove("open");
+});
+document.addEventListener("keydown", e => {
+  const t = e.target.closest && e.target.closest("[data-cite]");
+  if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openCite(t.dataset.cite, t.dataset.extra); }
+});
+$("#drawerClose").onclick = () => $("#drawer").classList.remove("open");
+
+/* ---------- tooltip ---------- */
+const tip = $("#tip");
+function showTip(ev, rows) {
+  tip.textContent = "";
+  rows.forEach(([v, k]) => { const d = el("div"); d.append(el("span", { class: "v" }, v)); if (k) d.append(el("span", { class: "k" }, "  " + k)); tip.append(d); });
+  tip.style.display = "block";
+  const x = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8), y = Math.min(ev.clientY + 14, innerHeight - tip.offsetHeight - 8);
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => tip.style.display = "none";
+function hover(node, rowsFn) {
+  node.addEventListener("pointermove", ev => showTip(ev, rowsFn()));
+  node.addEventListener("pointerleave", hideTip);
+  node.setAttribute("tabindex", "0");
+  node.addEventListener("focus", () => { const r = node.getBoundingClientRect(); showTip({ clientX: r.right, clientY: r.top }, rowsFn()); });
+  node.addEventListener("blur", hideTip);
+}
+
+/* ---------- navigation + theme ---------- */
+const sections = $$("main section");
+sections.forEach(sec => { const a = el("a", { href: "#" + sec.id, title: sec.dataset.title, "aria-label": sec.dataset.title }); $("#nav").append(a); });
+// current section = the last one whose top has reached the upper 40% of the viewport
+// (robust for sections taller than the screen, unlike "closest top")
+function curIdx() { let idx = 0; sections.forEach((x, i) => { if (x.getBoundingClientRect().top <= innerHeight * 0.4) idx = i; }); return idx; }
+function syncNav() {
+  const i = curIdx();
+  $$("#nav a").forEach((a, j) => a.classList.toggle("on", j === i));
+  $("#keys").classList.toggle("hide", i > 0);
+}
+let navRaf = 0, navTarget = 0, navAt = -1e9;
+function goTo(i) { navTarget = i; navAt = performance.now(); sections[i].scrollIntoView(); }
+addEventListener("scroll", () => { if (!navRaf) navRaf = requestAnimationFrame(() => { navRaf = 0; syncNav(); }); }, { passive: true });
+addEventListener("resize", syncNav);
+document.addEventListener("keydown", e => {
+  if (e.target.matches?.("input, select, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  // presses that arrive while a smooth scroll is still running continue from its target, so 3 quick presses = 3 sections
+  const inFlight = performance.now() - navAt < 900;
+  if (["ArrowRight", "PageDown", "j"].includes(e.key)) { e.preventDefault(); goTo(Math.min((inFlight ? navTarget : curIdx()) + 1, sections.length - 1)); }
+  if (["ArrowLeft", "PageUp", "k"].includes(e.key)) {
+    // inside a tall section: first go back to its top, then to the previous section
+    e.preventDefault();
+    if (inFlight) goTo(Math.max(navTarget - 1, 0));
+    else { const i = curIdx(); goTo(sections[i].getBoundingClientRect().top < -8 ? i : Math.max(i - 1, 0)); }
+  }
+  if (e.key === "t" || e.key === "T") toggleTheme();
+  if (e.key === "Escape") $("#drawer").classList.remove("open");
+});
+function toggleTheme() {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.dataset.theme = cur === "dark" ? "light" : "dark";
+  try { localStorage.setItem("jv-theme", document.documentElement.dataset.theme); } catch (_) {}
+}
+try { const t = localStorage.getItem("jv-theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}
+$("#themeBtn").onclick = toggleTheme;
+
+/* ---------- small helpers ---------- */
+function legend(host, items) {
+  host.textContent = "";
+  items.forEach(([label, color, kind]) => { const sp = el("span"); sp.append(el("i", { class: "sw " + (kind || ""), style: `background:${color}` })); sp.append(document.createTextNode(label)); host.append(sp); });
+}
+function table(host, head, rows, numCols = []) {
+  host.textContent = "";
+  const tr = el("tr"); head.forEach((h, i) => tr.append(el("th", { class: numCols.includes(i) ? "num" : "" }, h)));
+  const thead = el("thead"); thead.append(tr); host.append(thead);
+  const tb = el("tbody");
+  rows.forEach(r => { const row = el("tr"); r.forEach((c, i) => { const td = el("td", { class: numCols.includes(i) ? "num" : "" }); if (c instanceof Node) td.append(c); else td.textContent = c == null ? "–" : c; row.append(td); }); tb.append(row); });
+  host.append(tb);
+}
+function linScale(d0, d1, r0, r1) { return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); }
+function logScale(d0, d1, r0, r1) { const a = Math.log10(d0), b = Math.log10(d1); return v => r0 + (Math.log10(Math.max(v, d0)) - a) / (b - a) * (r1 - r0); }
+// clean linear ticks: ~n ticks at 1/2/5 x 10^k steps
+function niceTicks(lo, hi, n = 5) {
+  const raw = (hi - lo) / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+  const step = (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p, dec = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+  const out = []; for (let t = Math.ceil(lo / step - 1e-9) * step; t <= hi + 1e-9; t += step) out.push(+t.toFixed(dec + 1));
+  return { ticks: out, dec };
+}
+// bars: 4px rounded data end, square at the baseline
+function hbar(x0, y, len, h, fill) {
+  len = Math.max(2, len); const r = Math.min(4, len / 2, h / 2), x1 = x0 + len;
+  return s("path", { d: `M${x0},${y}H${x1 - r}A${r},${r} 0 0 1 ${x1},${y + r}V${y + h - r}A${r},${r} 0 0 1 ${x1 - r},${y + h}H${x0}Z`, fill });
+}
+function vbar(x, y0, len, w, fill) {
+  len = Math.max(2, len); const r = Math.min(4, len / 2, w / 2), yt = y0 - len;
+  return s("path", { d: `M${x},${y0}V${yt + r}A${r},${r} 0 0 1 ${x + r},${yt}H${x + w - r}A${r},${r} 0 0 1 ${x + w},${yt + r}V${y0}Z`, fill });
+}
+const seqIdx = v => Math.max(0, Math.min(7, Math.floor(v * 8 - 0.0001)));
+const isBaseline = m => !m.startsWith("jev") && !m.startsWith("haiku");
+// coverage: Haiku ran on a subset only; baselines with ok < total lost pairs to the per-run time limit
+// (runs/full/baselines.jsonl has 15 status=timeout records, all distribution_based, and no errors)
+const COV = DATA.coverage || {};
+const BASELINE_LIMIT_S = DATA.baseline_limit_s;   // timeout_s in scripts/32_full_baselines.py
+const timeoutMethods = () => Object.keys(COV).filter(m => isBaseline(m) && COV[m].ok < COV[m].total);
+// per source: pairs Jev hybrid has minus pairs this method has (both from cost_latency_by_source)
+function lostBySource(m) {
+  const B = DATA.cost_latency_by_source || {}, ref = B.jev_hybrid || {}, mine = B[m] || {};
+  return Object.keys(ref).map(s => [s, (ref[s]?.n || 0) - (mine[s]?.n || 0)]).filter(([, d]) => d > 0);
+}
+const HAIKU_N = COV.haiku_hybrid?.total;
+const subsetTag = () => HAIKU_N ? `${HAIKU_N}-pair subset` : "subset";
+// short qualifier for a mean over all non-dev pairs ("" when the method finished every pair)
+function covTag(m) {
+  if (m.startsWith("haiku")) return subsetTag();
+  const c = COV[m]; if (!c || c.ok >= c.total) return "";
+  return `${c.ok} of ${c.total} pairs; ${c.total - c.ok} timed out`;
+}
+const LQ = m => { const q = covTag(m); return q ? `${L[m]} (${q})` : L[m]; };   // all-pairs aggregates
+const LH = m => m.startsWith("haiku") ? `${L[m]} (${subsetTag()})` : L[m];       // curated tables (no timeouts there)
+// one sentence per method that lost pairs to the time limit, e.g. for chart notes
+function timeoutText(m) {
+  const c = COV[m]; if (!c || c.ok >= c.total) return "";
+  const by = lostBySource(m), src = by.length === 1 ? `all ${by[0][0]}` : by.map(([s, n]) => `${n} ${s}`).join(", ");
+  return `${L[m]} did not finish ${c.total - c.ok} of ${c.total} non-dev pairs (${src}) within the ${BASELINE_LIMIT_S.toLocaleString()} s per-run limit; its means use the ${c.ok} pairs that finished.`;
+}
+// citation for the timeout notes (data.json has no entry for it)
+DATA.cite.timeouts = DATA.cite.timeouts || { kind: "run", text: "Baseline runs stopped at the per-run time limit. Means use status=ok only, so these pairs are missing from every mean of that method. Counts: data.json → coverage (ok / total) and cost_latency_by_source.", file: "runs/full/baselines.jsonl", filter: "split!=dev, status=timeout", script: "scripts/32_full_baselines.py (timeout_s = 900), scripts/40_analyze.py:main (coverage)" };
+
+/* ---------- 0: title ---------- */
+$("#gen").textContent = DATA.generated.replace("T", " ");
+(function hero() {
+  const cl = DATA.cost_latency, host = $("#heroTiles");
+  const base = Object.entries(cl).filter(([m]) => !m.startsWith("jev") && !m.startsWith("haiku"));
+  const bestB = base.sort((a, b) => b[1].recall_mean - a[1].recall_mean)[0];
+  const tile = (label, val, key, sub) => { const t = el("div", { class: "tile" }); t.append(el("div", { class: "label" }, label)); const v = el("div", { class: "value" }); v.append(citeSpan(val, key, `${label}: ${val}` + (sub ? ` (${sub})` : ""))); t.append(v); if (sub) t.append(el("div", { class: "sub" }, sub)); host.append(t); };
+  if (cl.jev_hybrid) {
+    tile("Jev hybrid · mean Recall@GT", f3(cl.jev_hybrid.recall_mean), "cl:jev_hybrid", `${cl.jev_hybrid.n} non-dev pairs · 95% CI ${f3(cl.jev_hybrid.recall_ci[0])}–${f3(cl.jev_hybrid.recall_ci[1])}`);
+    if (bestB) tile(`Best Valentine matcher · ${L[bestB[0]]}`, f3(bestB[1].recall_mean), "cl:" + bestB[0], `${bestB[1].n} non-dev pairs · re-run on this Mac`);
+    tile("Jev cost per table pair", usd4(cl.jev_hybrid.cost_mean), "cl:jev_hybrid", `${tok(cl.jev_hybrid.tokens_per_cell)} input tokens per column pair at $0.042 / M`);
+    tile("Jev wall-clock per pair", secs(cl.jev_hybrid.wall_median), "cl:jev_hybrid", "median; CSV load + profiling + API");
+  }
+})();
+
+/* ---------- 1: example request ---------- */
+(function example() {
+  const ex = DATA.example; if (!ex) return;
+  $("#exReq").textContent = ex.request_text;
+  const host = $("#exResp");
+  const w = 520, rowH = 26, h = ex.answers.length * rowH + 30;
+  const svg = s("svg", { width: "100%", viewBox: `0 0 ${w} ${h}` });
+  const x = linScale(0, 1, 200, w - 50);
+  [0, 0.5, 1].forEach(t => { svg.append(s("line", { x1: x(t), x2: x(t), y1: 0, y2: h - 22, class: "gridline" })); svg.append(s("text", { x: x(t), y: h - 6, "text-anchor": "middle" }, t)); });
+  ex.answers.forEach((a, i) => {
+    const y = i * rowH + 6;
+    svg.append(s("text", { x: 192, y: y + 14, "text-anchor": "end" }, (a.gt ? "✓ " : "") + a.target));
+    const bw = Math.max(2, x(a.noul) - x(0));
+    const r = s("g"); r.append(s("rect", { x: x(0), y, width: x(1) - x(0), height: rowH - 2, fill: "transparent" }));
+    r.append(hbar(x(0), y + 3, bw, 16, a.gt ? "var(--jev)" : "var(--axis)"));
+    svg.append(r);
+    svg.append(s("text", { x: x(0) + bw + 6, y: y + 15 }, a.noul.toFixed(2)));
+    hover(r, () => [[a.noul.toFixed(2), "noul"], [a.target, a.gt ? "true match" : "not a match"]]);
+  });
+  host.append(svg);
+  // the build keeps only the top answers; the request itself has one Noul per target column
+  const nq = DRILL.pairs?.[ex.pair_id]?.tgt.length;
+  const shown = nq && nq > ex.answers.length ? `${nq} Nouls (top ${ex.answers.length} shown)` : `${ex.answers.length} Nouls`;
+  $("#exNote").textContent = `Pair ${ex.pair_id}, source column "${ex.source}". ✓ marks the ground-truth match. One request, ${shown}, ${ex.input_tokens.toLocaleString()} input tokens, ${(ex.latency_s * 1000).toFixed(0)} ms.`;
+})();
+
+/* ---------- 2: setup ---------- */
+(function setup() {
+  const nPairs = DATA.datasets.reduce((a, d) => a + d.pairs, 0), nMethods = Object.keys(DATA.cost_latency).length;
+  $("#setupTitle").textContent = `${nPairs} table pairs, ${nMethods} methods, one frozen protocol`;
+  const rows = DATA.datasets.map(d => [d.source, d.pairs, d.cells.toLocaleString(), `${d.cols_min}–${d.cols_max}`, `${d.rows_min.toLocaleString()}–${d.rows_max.toLocaleString()}`, d.dev]);
+  table($("#dataTable"), ["Source", "Pairs", "Column pairs", "Columns (source table)", "Rows (source table)", "Dev pairs"], rows, [1, 2, 3, 4, 5]);
+  $("#dataNote").textContent = "TPC-DI, Open Data, ChEMBL: generated by splitting one table, with optional noise in names (prefixes, abbreviations, dropped vowels) and values (typos, shifted numbers). WikiData, Magellan: curated. NYU: 10 newer pairs from the Valentine repository (commit " + (DATA.nyu_commit || "").slice(0, 7) + "). ING (2 pairs) is private and excluded.";
+  const sc = [["Unionable", "Same columns, split by rows (0/50/100% row overlap)."], ["View-Unionable", "Some shared columns, no shared rows."], ["Joinable", "Some shared columns, 50–100% shared rows, identical values."], ["Semantically-Joinable", "As joinable, but the shared values carry typos and formatting noise."]];
+  sc.forEach(([t, d]) => { const c = el("div", { class: "card scen" }); c.append(el("strong", {}, t)); c.append(el("p", { class: "note", style: "margin:6px 0 0" }, d)); $("#scenCards").append(c); });
+  const F = DATA.frozen;
+  const mrows = [
+    ["Jev · schema-only", "schema", "column name, inferred type, names of all columns in both tables", "this run"],
+    ["Jev · instance-only", "instance", `${F.jev.n_values} sampled distinct values, names hidden`, "this run"],
+    ["Jev · hybrid", "hybrid", "both of the above", "this run"],
+    ["Haiku 5.5 · hybrid", "hybrid (LLM)", "same profiles and wording; one request lists all candidates", `this run, ${subsetTag()}`],
+    ["Cupid", "schema", "names + structure", "re-run + paper"], ["Similarity Flooding", "schema", "names + graph", "re-run + paper"],
+    ["COMA (schema)", "schema", "names, paths", "re-run + paper"], ["COMA (instance)", "instance (paper's grouping)", "COMA schema matchers + TF-IDF over values, as in the paper", "re-run + paper"],
+    ["Distribution-based", "instance", "value distributions (EMD)", "re-run + paper" + (covTag("distribution_based") ? ` (${covTag("distribution_based")})` : "")], ["Jaccard-Levenshtein", "instance", "value-set overlap", "re-run + paper"],
+    ["EmbDI, SemProp", "hybrid", "embeddings", "paper only (not in today's package)"],
+  ];
+  table($("#methodTable"), ["Method", "Family", "What it sees", "Numbers from"], mrows);
+  const pc = $("#protoCard");
+  pc.append(el("div", { class: "kicker" }, "Frozen before the test run"));
+  const ul = el("ul", { style: "margin:0;padding-left:20px" });
+  [`Model pinned to ${F.jev.model}; wording ${F.jev.wording_id}: “${F.jev.wording}” with true/false criteria`,
+   `${F.jev.n_values} distinct values per column, each cut to ${F.jev.max_len} characters; seed ${F.jev.seed}`,
+   `One request per source column (fan-out), ${F.jev.concurrency} requests in flight`,
+   `Baselines: valentine ${F.baselines.valentine_version}, settings grid-searched on the same 24 dev pairs (paper Table II ranges), ${F.baselines.instance_sample_size.toLocaleString()}-row sample`,
+   `Haiku: ${F.haiku.model}, effort ${F.haiku.effort}, thinking ${F.haiku.thinking}`,
+   "Scenario-agnostic question: no method is told whether tables are unionable or joinable"].forEach(t => ul.append(el("li", {}, t)));
+  pc.append(ul);
+  // wording chart: dot plot (the axis does not start at 0, so bars would exaggerate the gaps)
+  const W = DATA.dev.wording, w = 520, h = 40 * W.length + 30, x = linScale(0.9, 1, 120, w - 70);
+  const svg = s("svg", { width: "100%", viewBox: `0 0 ${w} ${h}` });
+  [0.9, 0.925, 0.95, 0.975, 1].forEach((t, i) => { svg.append(s("line", { x1: x(t), x2: x(t), y1: 0, y2: h - 22, class: "gridline" })); if (i % 2 === 0) svg.append(s("text", { x: x(t), y: h - 6, "text-anchor": "middle" }, t.toFixed(2))); });
+  W.forEach((r, i) => {
+    const y = i * 40 + 18, chosen = r.wording_id === F.jev.wording_id, v = Math.max(0.9, r.recall);
+    svg.append(s("text", { x: 112, y: y + 4, "text-anchor": "end", style: chosen ? "fill:var(--ink);font-weight:600" : "" }, r.wording_id + (chosen ? " (frozen)" : "")));
+    const g = s("g");
+    g.append(s("rect", { x: 120, y: y - 16, width: w - 190, height: 32, fill: "transparent" }));
+    g.append(s("circle", { cx: x(v), cy: y, r: 6, fill: chosen ? "var(--jev)" : "var(--muted)", stroke: "var(--surface)", "stroke-width": 2 }));
+    svg.append(g); svg.append(s("text", { x: x(v) + 12, y: y + 4 }, r.recall.toFixed(3)));
+    hover(g, () => [[r.recall.toFixed(3), "mean Recall@GT"], [r.tok_per_cell.toFixed(0) + " tokens", "per column pair"], ["$" + r.cost.toFixed(3), "dev cost"]]);
+  });
+  $("#wordingChart").append(svg);
+  // run-to-run spread of the frozen setup (section 7) sets how large a wording gap must be to mean anything
+  const sr = Object.values(DATA.dev.stability.per_run_mean), srLo = Math.min(...sr), srHi = Math.max(...sr);
+  const wn = $("#wordingNote"); wn.append(document.createTextNode(`Axis starts at 0.90. W0 long question; W1 short; W2 short + criteria; W3 short + terse criteria. Single runs: ${sr.length} identical runs of W2 gave ${f3(srLo)}–${f3(srHi)} (section 7), so gaps smaller than about ${f2(srHi - srLo)} are within run-to-run noise. `));
+  wn.append(citeSpan("Source", "dev:wording"));
+})();
+
+/* ---------- 3: accuracy boxes ---------- */
+const ACC_ORDER = [["schema", ["cupid", "similarity_flooding", "coma_schema", "jev_schema"]], ["instance", ["distribution_based", "jaccard_levenshtein", "coma_instance", "jev_instance"]], ["hybrid", ["embdi", "semprop", "jev_hybrid", "haiku_hybrid"]]];
+const SHORT = { cupid: "CU", similarity_flooding: "SF", coma_schema: "COS", jev_schema: "Jev-S", distribution_based: "DB", jaccard_levenshtein: "JL", coma_instance: "COI", jev_instance: "Jev-I", embdi: "EDI", semprop: "SP", jev_hybrid: "Jev-H", haiku_hybrid: "Haiku" };
+function paperMedian(sc, m, slice) {
+  const P = DATA.paper;
+  if (["cupid", "similarity_flooding", "coma_schema"].includes(m)) return slice === "schema_noise:noisy" ? [P.fig4.median[sc]?.[m], "paper:fig4"] : null;
+  const fig = ["embdi", "semprop"].includes(m) ? "fig6" : ["distribution_based", "jaccard_levenshtein", "coma_instance"].includes(m) ? "fig5" : null;
+  if (!fig) return null;
+  const lvl = slice === "instance_noise:noisy" ? "noisy" : slice === "instance_noise:verbatim" ? "verbatim" : null;
+  const v = lvl && P[fig].median[sc]?.[m]?.[lvl];
+  return v == null ? null : [v, "paper:" + fig];
+}
+function drawAccuracy() {
+  const src = $("#accSource").value, slice = $("#accSlice").value, showPaper = $("#accPaper").checked;
+  // paper medians pool all three sources, so they are hidden (and the toggle disabled) when one source is picked
+  $("#accPaper").disabled = !!src; $("#accPaper").parentElement.title = src ? "Paper medians cover all three sources together" : "";
+  $("#accPaper").parentElement.style.opacity = src ? 0.5 : "";
+  const host = $("#accFacets"); host.textContent = "";
+  legend($("#accLegend"), [["Jev", "var(--jev)"], [`Haiku 5.5 (${subsetTag()})`, "var(--haiku)"], ["Valentine matchers, re-run", "var(--valentine)"], ["Paper median (≈)", "var(--paper)", "tick"]]);
+  const missing = new Set(), short = [], haikuN = [];
+  const key = (src ? `source:${src}` : "") + (slice !== "all" ? (src ? "|" : "") + slice : "") || "all";
+  ["Unionable", "View-Unionable", "Joinable", "Semantically-Joinable"].forEach(sc => {
+    const card = el("div", { class: "card" }); host.append(card);
+    // pairs a method lost to the time limit in this view (compared with Jev hybrid, which finished every pair)
+    const refN = DATA.accuracy[sc]?.jev_hybrid?.[key]?.n;
+    timeoutMethods().forEach(m => { const n = DATA.accuracy[sc]?.[m]?.[key]?.n ?? 0; if (refN && n < refN) short.push(`${SHORT[m] || m} ${sc} ${n} of ${refN}`); });
+    const hn = DATA.accuracy[sc]?.haiku_hybrid?.[key]?.n; if (hn) haikuN.push([sc, hn]);
+    let anyBox = false;
+    const W = 600, H = 300, top = 30, bot = 56, left = 40;
+    const svg = s("svg", { width: "100%", viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Recall at ground truth, ${sc}` });
+    svg.append(s("text", { x: 0, y: 16, class: "title" }, sc));
+    const y = linScale(0, 1, H - bot, top);
+    [0, 0.25, 0.5, 0.75, 1].forEach(t => { svg.append(s("line", { x1: left, x2: W, y1: y(t), y2: y(t), class: "gridline" })); svg.append(s("text", { x: left - 6, y: y(t) + 4, "text-anchor": "end" }, t)); });
+    const slots = ACC_ORDER.flatMap(([fam, ms], gi) => ms.map((m, j) => ({ fam, m, gi })));
+    const slotW = (W - left - 30) / (slots.length + 2);
+    let xi = 0;
+    ACC_ORDER.forEach(([fam, ms], gi) => {
+      const gx0 = left + 10 + (xi + gi * 1) * slotW;
+      svg.append(s("text", { x: gx0 + (ms.length * slotW) / 2, y: H - 8, "text-anchor": "middle", style: "font-size:12px;fill:var(--muted)" }, fam));
+      ms.forEach((m, j) => {
+        const cx = gx0 + j * slotW + slotW / 2;
+        const B = DATA.accuracy[sc]?.[m]?.[key];
+        // no result from this run: grey label, empty slot (a "–" inside the plot read like a value at 0.5)
+        if (!B) missing.add(m); else anyBox = true;
+        svg.append(s("text", { x: cx, y: H - bot + 18, "text-anchor": "middle", style: B ? "" : "fill:var(--muted);opacity:0.6" }, SHORT[m]));
+        if (B) {
+          const g = s("g"); const c = colorOf(m), bw = Math.min(24, slotW * 0.55);
+          g.append(s("line", { x1: cx, x2: cx, y1: y(B.lo), y2: y(B.hi), stroke: c, "stroke-width": 1.5 }));
+          g.append(s("rect", { x: cx - bw / 2, y: y(B.q3), width: bw, height: Math.max(2, y(B.q1) - y(B.q3)), rx: 4, fill: c, "fill-opacity": 0.22, stroke: c, "stroke-width": 1.5 }));
+          g.append(s("line", { x1: cx - bw / 2, x2: cx + bw / 2, y1: y(B.median), y2: y(B.median), stroke: c, "stroke-width": 3 }));
+          g.append(s("circle", { cx, cy: y(B.mean), r: 4, fill: c, stroke: "var(--surface)", "stroke-width": 2 }));
+          (B.outliers || []).forEach(o => g.append(s("circle", { cx, cy: y(o), r: 2, fill: c, "fill-opacity": 0.6 })));
+          g.append(s("rect", { x: cx - slotW / 2, y: top, width: slotW, height: H - bot - top, fill: "transparent" }));
+          hover(g, () => [[f3(B.median), `median · ${L[m]}`], [f3(B.mean), `mean (95% CI ${f3(B.mean_ci[0])}–${f3(B.mean_ci[1])})`], [`${f2(B.q1)}–${f2(B.q3)}`, "middle 50%"], [String(B.n), "pairs"]]);
+          g.style.cursor = "pointer"; g.dataset.cite = `box:${sc}:${m}`; g.dataset.extra = `median ${f3(B.median)}, mean ${f3(B.mean)}, n=${B.n} (${key})`;
+          svg.append(g);
+        } else {
+          const hit = s("rect", { x: cx - slotW / 2, y: H - bot + 4, width: slotW, height: 20, fill: "transparent" });
+          const why = ["embdi", "semprop"].includes(m) ? "paper only (not in today's package)" : "no results from this run yet";
+          hover(hit, () => [[L[m], ""], [why, ""]]); svg.append(hit);
+        }
+        const pm = showPaper && !src ? paperMedian(sc, m, slice) : null;
+        if (pm && pm[0] != null) {
+          const t = s("g"); const px = B ? cx + Math.min(24, slotW * 0.55) / 2 + 6 : cx;
+          t.append(s("line", { x1: px - 6, x2: px + 6, y1: y(pm[0]), y2: y(pm[0]), stroke: "var(--paper)", "stroke-width": 3 }));
+          t.append(s("rect", { x: px - 8, y: y(pm[0]) - 8, width: 16, height: 16, fill: "transparent" }));
+          t.dataset.cite = pm[1]; t.dataset.extra = `≈${pm[0]} median (${L[m]}, ${sc})`; t.style.cursor = "pointer";
+          hover(t, () => [["≈" + f2(pm[0]), `paper median · ${L[m]}`], ["read by eye from the figure", ""]]);
+          svg.append(t);
+        }
+      });
+      xi += ms.length;
+    });
+    // empty facet (e.g. Joinable pairs never have noisy values): say so instead of showing a blank grid
+    if (!anyBox) svg.append(s("text", { x: (W + left) / 2, y: y(0.5), "text-anchor": "middle", style: "fill:var(--muted);font-size:14px" }, "No test pairs in this slice"));
+    card.append(svg);
+  });
+  const paperOnly = ["embdi", "semprop"];
+  if (missing.size) $("#accLegend").append(el("span", { class: "muted" }, [...missing].some(m => !paperOnly.includes(m)) ? "Grey label = no result from this run for this slice" : "Grey label = paper only (EmbDI, SemProp are not in today's package)"));
+  // coverage note under the facets: timeouts and the Haiku subset, for the slice on screen
+  const cn = $("#accCov"); cn.textContent = "";
+  const parts = timeoutMethods().map(timeoutText);
+  if (short.length) parts.push(`In this view: ${short.join(", ")} pairs.`);
+  if (haikuN.length) parts.push(`Haiku 5.5: ${subsetTag()}; ` + (haikuN.length === 4 && new Set(haikuN.map(h => h[1])).size === 1 ? `${haikuN[0][1]} generated pairs per scenario in this view.` : `generated pairs in this view: ${haikuN.map(([sc, n]) => `${sc} ${n}`).join(", ")}.`));
+  if (parts.length) { cn.append(document.createTextNode(parts.join(" ") + " ")); if (timeoutMethods().length) cn.append(citeSpan("Source", "timeouts")); }
+}
+["#accSource", "#accSlice", "#accPaper"].forEach(id => $(id).addEventListener("change", drawAccuracy));
+drawAccuracy();
+
+(function curatedTables() {
+  const C = DATA.curated, P = DATA.paper, methods = ["jev_hybrid", "jev_schema", "jev_instance", "haiku_hybrid", "cupid", "similarity_flooding", "coma_schema", "coma_instance", "distribution_based", "jaccard_levenshtein", "embdi"];
+  const mag = methods.map(m => [LH(m), C.Magellan?.[m] ? citeSpan(f3(C.Magellan[m].mean), `cur:Magellan:${m}`) : "–", P.table_iv.rows[m] ? citeSpan(f3(P.table_iv.rows[m][0]), "paper:t4") : "–", C.Magellan?.[m]?.n ?? "–"]);
+  table($("#magTable"), ["Method", "This run", "Paper (Table IV)", "Pairs"], mag, [1, 2, 3]);
+  const sc = ["Unionable", "View-Unionable", "Joinable", "Semantically-Joinable"];
+  const wk = methods.map(m => [LH(m), ...sc.map(x => { const a = C.WikiData?.[x]?.[m], b = P.fig7.values[x]?.[m]; const t = (a == null ? "–" : f2(a)) + " / " + (b == null ? "–" : "≈" + f2(b)); return a == null && b == null ? "–" : t; })]);
+  table($("#wikiTable"), ["Method (this run / paper)", "Union.", "View-U.", "Join.", "Sem.-J."], wk, [1, 2, 3, 4]);
+  const ny = methods.filter(m => C.NYU?.[m]).map(m => [LH(m), citeSpan(f3(C.NYU[m].mean), `cur:NYU:${m}`), C.NYU[m].n, `${f2(C.NYU[m].ci[0])}–${f2(C.NYU[m].ci[1])}`]);
+  table($("#nyuTable"), ["Method", "Mean Recall@GT", "Pairs", "95% CI"], ny, [1, 2, 3]);
+  const S = DATA.secondary;
+  const sec = methods.filter(m => S[m]).map(m => [LQ(m), f3(S[m].mrr), f3(S[m].p_at_1), f3(S[m].h1_f1), S[m].t5_f1 != null ? f3(S[m].t5_f1) : "n/a", S[m].t7_precision != null ? f3(S[m].t7_precision) : "n/a", S[m].t7_recall != null ? f3(S[m].t7_recall) : "n/a", S[m].t7_f1 != null ? f3(S[m].t7_f1) : "n/a"]);
+  table($("#secTable"), ["Method", "MRR", "P@1", "1:1 F1 (Hungarian)", "F1 @ noul≥0.5", "Precision @0.7", "Recall @0.7", "F1 @0.7"], sec, [1, 2, 3, 4, 5, 6, 7]);
+  const cap = el("caption", { style: "caption-side:bottom;text-align:left;padding-top:8px", class: "note" }); cap.append(document.createTextNode("Means over non-dev pairs. Thresholded metrics only for methods that return probabilities. ")); cap.append(citeSpan("Source", "thr")); $("#secTable").append(cap);
+})();
+
+/* ---------- 4: cost & latency ---------- */
+function drawScatter(scope) {
+  const host = $("#clScatter"); host.textContent = "";
+  const D = scope === "haiku" ? DATA.haiku_subset : DATA.cost_latency;
+  const pts = Object.entries(D).map(([m, r]) => ({ m, x: r.wall_mean ?? r.wall_mean, y: r.recall_mean ?? r.recall, ylo: (r.recall_ci || [])[0], yhi: (r.recall_ci || [])[1], xlo: (r.wall_ci || [])[0], xhi: (r.wall_ci || [])[1], n: r.n, cost: r.cost_mean }));
+  if (!pts.length) { $("#clLegend").textContent = ""; host.append(el("p", { class: "note" }, "No results yet.")); return; }
+  const groups = [["Jev", "var(--jev)", m => m.startsWith("jev")], [scope === "haiku" ? "Haiku 5.5" : `Haiku 5.5 (${subsetTag()})`, "var(--haiku)", m => m.startsWith("haiku")], ["Valentine matchers, re-run", "var(--valentine)", isBaseline]];
+  legend($("#clLegend"), groups.filter(([, , f]) => pts.some(p => f(p.m))).map(([l, c]) => [l, c]));
+  // note: what the bars and times mean, plus which points rest on fewer pairs
+  const nMax = Math.max(...pts.map(p => p.n || 0));
+  let note = `Bars = 95% bootstrap CI. Valentine times: matcher + CSV load on this Mac, one pair per process. Jev and Haiku times: CSV load + profiling + all API calls for the pair, ${DATA.frozen.jev.concurrency} / 16 requests in flight.`;
+  if (scope === "haiku") {
+    const fewer = pts.filter(p => p.n < nMax).map(p => `${L[p.m]} ${p.n} of ${nMax} (${nMax - p.n} timed out)`);
+    note += ` Every method on the same ${nMax} pairs` + (fewer.length ? `, except ${fewer.join(", ")}.` : ".");
+  } else {
+    timeoutMethods().forEach(m => { note += " " + timeoutText(m) + " Its mean time leaves out the stopped runs, so it is a lower bound."; });
+    if (D.haiku_hybrid) note += ` Haiku: ${subsetTag()} only.`;
+  }
+  $("#clNote").textContent = note;
+  const W = 600, H = 380, left = 50, bot = 40, top = 10, right = 20;
+  const xs = pts.map(p => p.x).filter(v => v > 0);
+  const xd0 = Math.min(0.3, ...xs) * 0.8, xd1 = Math.max(...xs) * 1.4, x = logScale(xd0, xd1, left, W - right);
+  const ymin = Math.max(0, Math.floor(Math.min(...pts.map(p => p.ylo ?? p.y)) * 20) / 20 - 0.02);
+  const y = linScale(ymin, 1, H - bot, top);
+  const svg = s("svg", { width: "100%", viewBox: `0 0 ${W} ${H}` });
+  const yt = niceTicks(ymin, 1, 6);
+  yt.ticks.filter(t => t >= ymin).forEach(t => { svg.append(s("line", { x1: left, x2: W - right, y1: y(t), y2: y(t), class: "gridline" })); svg.append(s("text", { x: left - 6, y: y(t) + 4, "text-anchor": "end" }, t.toFixed(Math.max(1, yt.dec)))); });
+  [0.1, 0.3, 1, 3, 10, 30, 100, 300, 1000, 3000].forEach(t => { if (t < xd0 || t > xd1) return; svg.append(s("line", { x1: x(t), x2: x(t), y1: top, y2: H - bot, class: "gridline" })); svg.append(s("text", { x: x(t), y: H - bot + 16, "text-anchor": "middle" }, t.toLocaleString() + " s")); });
+  svg.append(s("text", { x: (W + left) / 2, y: H - 4, "text-anchor": "middle", style: "fill:var(--muted)" }, "wall-clock seconds per table pair"));
+  svg.append(s("text", { x: 12, y: top + 4, style: "fill:var(--muted)", transform: `rotate(-90 12 ${top + 4})`, "text-anchor": "end" }, "mean Recall@GT"));
+  // direct labels: try four spots around each dot, keep the first that collides with no earlier label or dot
+  const placed = pts.map(p => ({ x0: x(p.x) - 7, x1: x(p.x) + 7, y0: y(p.y) - 7, y1: y(p.y) + 7 }));
+  const hits = (b) => placed.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+  pts.forEach(p => {
+    const c = colorOf(p.m), g = s("g"), px = x(p.x), py = y(p.y);
+    if (p.ylo != null) g.append(s("line", { x1: px, x2: px, y1: y(p.ylo), y2: y(p.yhi), stroke: c, "stroke-width": 2 }));
+    if (p.xlo != null) g.append(s("line", { x1: x(p.xlo), x2: x(p.xhi), y1: py, y2: py, stroke: c, "stroke-width": 2 }));
+    g.append(s("circle", { cx: px, cy: py, r: 6, fill: c, stroke: "var(--surface)", "stroke-width": 2 }));
+    g.append(s("circle", { cx: px, cy: py, r: 14, fill: "transparent" }));
+    const lab = SHORT[p.m] || p.m, tw = lab.length * 7 + 2;
+    const spots = [[px + 10, py - 8, "start"], [px + 10, py + 18, "start"], [px - 10, py - 8, "end"], [px - 10, py + 18, "end"]];
+    const box = ([lx, ly, a]) => ({ x0: a === "start" ? lx : lx - tw, x1: a === "start" ? lx + tw : lx, y0: ly - 11, y1: ly + 3 });
+    const pick = spots.find(sp => { const b = box(sp); return !hits(b) && b.x0 >= left && b.x1 <= W; }) || spots[0];
+    placed.push(box(pick));
+    g.append(s("text", { x: pick[0], y: pick[1], "text-anchor": pick[2], style: "fill:var(--ink-2);font-size:12px" }, lab));
+    hover(g, () => [[f3(p.y), `mean Recall@GT · ${L[p.m]}`], [secs(p.x), "mean wall-clock per pair"], [usd4(p.cost), "API cost per pair"], [String(p.n), "pairs" + (scope !== "haiku" && covTag(p.m) ? ` (${covTag(p.m)})` : "")]]);
+    g.dataset.cite = scope === "haiku" ? "haiku_subset" : "cl:" + p.m; g.style.cursor = "pointer";
+    svg.append(g);
+  });
+  host.append(svg);
+}
+$$("#clScope button").forEach(b => b.onclick = () => { $$("#clScope button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawScatter(b.dataset.v); });
+drawScatter("all");
+
+(function costTables() {
+  const C = DATA.cost_latency, rows = [];
+  ["jev_hybrid", "jev_schema", "jev_instance", "haiku_hybrid"].forEach(m => { if (!C[m]) return; rows.push([LQ(m), citeSpan(usd4(C[m].cost_mean), "cl:" + m), usd4(C[m].cost_per_1k_cells), tok(C[m].tokens_per_cell), citeSpan(usd(C[m].cost_total), "cl:" + m)]); });
+  rows.push([el("span", { class: "muted" }, "Valentine matchers"), "$0 API", "–", "–", "CPU time on this Mac (see chart)"]);
+  table($("#costTable"), ["Method", "Per pair (mean)", "Per 1,000 column pairs", "Input tokens / column pair", "Whole run"], rows, [1, 2, 3]);
+  const cn = $("#costNote"); cn.append(document.createTextNode("Jev: $0.042 per million input tokens, output free ")); cn.append(citeSpan("(price)", "price:jev")); cn.append(document.createTextNode(". Haiku: $0.10 / $0.50 per million input / output tokens ")); cn.append(citeSpan("(price)", "price:haiku")); cn.append(document.createTextNode(`. Haiku runs only on the ${subsetTag()}, so its whole-run cost is not comparable.`));
+  // Table V chart
+  const T = DATA.paper.table_v.seconds, methods = ["coma_schema", "similarity_flooding", "cupid", "distribution_based", "coma_instance", "jaccard_levenshtein", "semprop", "embdi", "jev_hybrid", "haiku_hybrid"];
+  const t5items = [["Paper, Table V (80-core VMs)", "var(--paper)"]];
+  if (methods.some(m => isBaseline(m) && C[m])) t5items.push(["Valentine matchers, this run (one laptop)", "var(--valentine)"]);
+  if (C.jev_hybrid) t5items.push(["Jev, this run", "var(--jev)"]);
+  if (C.haiku_hybrid) t5items.push([`Haiku 5.5, this run (${subsetTag()})`, "var(--haiku)"]);
+  legend($("#t5Legend"), t5items);
+  const allT = methods.flatMap(m => [T[m], C[m]?.wall_mean]).filter(v => v > 0);
+  const mnT = Math.min(...allT), x0v = mnT >= 0.3 ? 0.3 : Math.pow(10, Math.floor(Math.log10(mnT)));
+  const W = 1000, rowH = 34, H = methods.length * rowH + 40, left = 190, x = logScale(x0v, 10000, left, W - 80);
+  const svg = s("svg", { width: "100%", viewBox: `0 0 ${W} ${H}` });
+  // label the axis origin too (bars start there), not only the powers of ten
+  [...new Set([x0v, 0.01, 0.1, 1, 10, 100, 1000, 10000])].filter(t => t >= x0v).forEach(t => { svg.append(s("line", { x1: x(t), x2: x(t), y1: 0, y2: H - 26, class: "gridline" })); svg.append(s("text", { x: x(t), y: H - 8, "text-anchor": "middle" }, t.toLocaleString() + " s")); });
+  methods.forEach((m, i) => {
+    const y0 = i * rowH + 4; svg.append(s("text", { x: left - 10, y: y0 + 18, "text-anchor": "end" }, L[m]));
+    const bars = [];
+    if (T[m] != null) bars.push([T[m], "var(--paper)", "paper:t5", "paper"]);
+    const mine = C[m]; if (mine) bars.push([mine.wall_mean, colorOf(m), "cl:" + m, "this run"]);
+    bars.forEach(([v, c, ck, who], j) => {
+      const yy = y0 + j * 14 + (bars.length === 1 ? 7 : 0), g = s("g");
+      g.append(s("rect", { x: left, y: yy - 1, width: W - 80 - left, height: 14, fill: "transparent" }));
+      g.append(hbar(x(x0v), yy, x(v) - x(x0v), 12, c));
+      g.dataset.cite = ck; g.style.cursor = "pointer"; svg.append(g);
+      // this-run bars for methods that did not run on every pair say so next to the value
+      const q = who === "this run" ? covTag(m) + (timeoutMethods().includes(m) ? "; mean of finished runs" : "") : "";
+      svg.append(s("text", { x: x(v) + 6, y: yy + 10, style: "font-size:11px" }, secs(v) + (q ? ` (${q})` : "")));
+      hover(g, () => [[secs(v), `${who} · ${L[m]}`]].concat(q ? [[q, ""]] : []));
+    });
+  });
+  $("#t5Chart").append(svg);
+  $("#t5Note").textContent = `Paper: two 80-core, 320 GB VMs, all rows (p. 478). This run: one Intel i9-9880H laptop, ${DATA.frozen.baselines.instance_sample_size.toLocaleString()}-row sample (package default). The two are not like for like; the chart shows orders of magnitude. ` + timeoutMethods().map(m => timeoutText(m) + " Its time here is a lower bound.").join(" ");
+  // packing
+  const pk = DATA.pilot.packing.map(r => [r.source, r.cells.toLocaleString(), (r.singles_tokens / r.fanout_tokens).toFixed(1) + "×", (r.singles_wall / r.fanout_wall).toFixed(1) + "×", f3(r.mean_abs_diff), `${f2(r.fanout_recall)} / ${f2(r.singles_recall)}`]);
+  table($("#packTable"), ["Pilot pair", "Column pairs", "Tokens (singles ÷ fan-out)", "Wall (singles ÷ fan-out)", "Mean |Δnoul|", "Recall@GT (fan-out / singles)"], pk, [1, 2, 3, 4, 5]);
+  const pcap = el("caption", { style: "caption-side:bottom;text-align:left;padding-top:8px", class: "note" }); pcap.append(document.createTextNode("Jev evaluates each Noul on its own, so packing changes cost and time, not the information a question sees. ")); pcap.append(citeSpan("Source", "pilot:packing")); $("#packTable").append(pcap);
+  table($("#concTable"), ["Requests in flight", "Wall-clock for the pair", "Request p50", "Request p95"], DATA.pilot.concurrency.map(r => [r.concurrency, secs(r.wall_s), secs(r.api_p50), secs(r.api_p95)]), [0, 1, 2, 3]);
+  // sweep chart: recall vs tokens per column pair, points labeled with N (one axis each)
+  const SW = DATA.dev.sweep, w = 520, h = 260, l = 60, b = 44;
+  const tx0 = Math.min(...SW.map(r => r.tok_per_cell)) * 0.9, tx1 = Math.max(...SW.map(r => r.tok_per_cell)) * 1.08;
+  const xx = linScale(tx0, tx1, l, w - 20);
+  const yy = linScale(0.97, 1, h - b, 24);
+  const sv = s("svg", { width: "100%", viewBox: `0 0 ${w} ${h}` });
+  [0.97, 0.98, 0.99, 1].forEach(t => { sv.append(s("line", { x1: l, x2: w - 20, y1: yy(t), y2: yy(t), class: "gridline" })); sv.append(s("text", { x: l - 6, y: yy(t) + 4, "text-anchor": "end" }, t.toFixed(2))); });
+  niceTicks(tx0, tx1, 8).ticks.filter(t => xx(t) >= l + 20 && t <= tx1).forEach(t => sv.append(s("text", { x: xx(t), y: h - b + 16, "text-anchor": "middle" }, t)));
+  sv.append(s("text", { x: (w + l) / 2, y: h - 6, "text-anchor": "middle", style: "fill:var(--muted)" }, "input tokens per column pair"));
+  const path = SW.map((r, i) => (i ? "L" : "M") + xx(r.tok_per_cell) + " " + yy(r.recall)).join(" ");
+  sv.append(s("path", { d: path, fill: "none", stroke: "var(--jev)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  SW.forEach(r => { const g = s("g"); g.append(s("circle", { cx: xx(r.tok_per_cell), cy: yy(r.recall), r: 5, fill: "var(--jev)", stroke: "var(--surface)", "stroke-width": 2 })); g.append(s("text", { x: xx(r.tok_per_cell), y: yy(r.recall) - 12, "text-anchor": "middle" }, "N=" + r.N)); g.append(s("circle", { cx: xx(r.tok_per_cell), cy: yy(r.recall), r: 14, fill: "transparent" })); hover(g, () => [[r.recall.toFixed(3), `mean Recall@GT, N=${r.N}`], [r.tok_per_cell.toFixed(0), "tokens per column pair"]]); g.dataset.cite = "dev:sweep"; sv.append(g); });
+  $("#sweepChart").append(sv);
+  $("#sweepNote").textContent = "Axis starts at 0.97. More values cost more and did not help on the dev pairs, so N = 10 was frozen.";
+})();
+
+/* ---------- 5: where Jev fails ---------- */
+function shade(v) { return v == null ? "transparent" : `var(--seq-${seqIdx(v)})`; }
+// text / marks on a shaded cell: contrast color for that step, defined per theme (dark mode ramps light -> high)
+function inkOn(v) { return v == null ? "var(--ink)" : `var(--on-seq-${seqIdx(v)})`; }
+(function failures() {
+  const cells = DATA.difficulty.cells, ms = ["jev_hybrid", "jev_schema", "jev_instance", "coma_instance", "coma_schema", "distribution_based", "jaccard_levenshtein", "similarity_flooding", "cupid"].filter(m => cells.some(c => c.method === m));
+  const keys = [...new Set(cells.map(c => [c.scenario, c.schema_noise, c.instance_noise].join("|")))].sort((a, b) => ["Unionable", "View-Unionable", "Joinable", "Semantically-Joinable"].indexOf(a.split("|")[0]) - ["Unionable", "View-Unionable", "Joinable", "Semantically-Joinable"].indexOf(b.split("|")[0]) || a.localeCompare(b));
+  let anyFewer = false;
+  const t = el("table"); const hr = el("tr"); ["Scenario", "Names", "Values", "Pairs", ...ms.map(m => SHORT[m] || m)].forEach((h, i) => hr.append(el("th", { class: i >= 3 ? "num" : "" }, h))); t.append(hr);
+  keys.forEach(k => {
+    const [sc, sn, inn] = k.split("|"), tr = el("tr");
+    const n = cells.find(c => c.scenario === sc && c.schema_noise === sn && c.instance_noise === inn && c.method === "jev_hybrid")?.n;
+    [sc, sn, inn, n].forEach((v, i) => tr.append(el("td", { class: i === 3 ? "num" : "" }, v ?? "–")));
+    ms.forEach(m => { const c = cells.find(c => c.scenario === sc && c.schema_noise === sn && c.instance_noise === inn && c.method === m);
+      const fewer = c && n != null && c.n < n; if (fewer) anyFewer = true;   // e.g. pairs lost to the baseline time limit
+      const td = el("td", { class: "num", style: `background:${shade(c?.mean)};color:${inkOn(c?.mean)}` }, c ? f2(c.mean) + (fewer ? "*" : "") : "–"); if (c) hover(td, () => [[f3(c.mean), `mean Recall@GT · ${L[m]}`], [`${sc}, ${sn} names, ${inn} values`, ""], [String(c.n), "pairs"]]); tr.append(td); });
+    t.append(tr);
+  });
+  $("#diffTable").append(t);
+  if (anyFewer) { const dc = $("#diffCov"); dc.append(document.createTextNode("* Mean over fewer pairs than the Pairs column (hover for n). " + timeoutMethods().map(timeoutText).join(" ") + " ")); if (timeoutMethods().length) dc.append(citeSpan("Source", "timeouts")); }
+  const ramp = el("span", { class: "ramp" }); ramp.append(document.createTextNode("0"));
+  for (let i = 0; i < 8; i++) ramp.append(el("i", { style: `background:var(--seq-${i})` }));
+  ramp.append(document.createTextNode("1")); $("#diffNote").append(ramp);
+  // k chart: grouped bars, Jev hybrid vs the best re-run Valentine matcher (by overall mean Recall@GT)
+  const K = DATA.difficulty.gt_size;
+  const bestBase = Object.entries(DATA.cost_latency).filter(([m]) => isBaseline(m) && K.some(r => r.method === m)).sort((a, b) => b[1].recall_mean - a[1].recall_mean)[0]?.[0];
+  const cmp = ["jev_hybrid", bestBase].filter(m => m && K.some(r => r.method === m));
+  const bins = ["1", "2–5", "6–15", "16+"].filter(bn => K.some(r => r.k_bin === bn && cmp.includes(r.method)));
+  const w = 520, h = 260, l = 40, b = 40, gw = (w - l - 10) / Math.max(1, bins.length), bw = Math.min(24, gw / (cmp.length + 1));
+  const y = linScale(0, 1, h - b, 10), svg = s("svg", { width: "100%", viewBox: `0 0 ${w} ${h}` });
+  [0, 0.25, 0.5, 0.75, 1].forEach(tk => { svg.append(s("line", { x1: l, x2: w, y1: y(tk), y2: y(tk), class: "gridline" })); svg.append(s("text", { x: l - 6, y: y(tk) + 4, "text-anchor": "end" }, tk)); });
+  bins.forEach((bn, i) => {
+    const gx = l + i * gw + gw / 2 - (cmp.length * (bw + 2) - 2) / 2;
+    svg.append(s("text", { x: l + i * gw + gw / 2, y: h - b + 18, "text-anchor": "middle" }, "k = " + bn));
+    cmp.forEach((m, j) => {
+      const r = K.find(r => r.method === m && r.k_bin === bn); if (!r) return;
+      const g = s("g"); g.append(s("rect", { x: gx + j * (bw + 2), y: y(1), width: bw, height: y(0) - y(1), fill: "transparent" }));
+      g.append(vbar(gx + j * (bw + 2), y(0), y(0) - y(r.mean), bw, colorOf(m)));
+      hover(g, () => [[f3(r.mean), `mean Recall@GT · ${L[m]}`], [String(r.n), "pairs"]]); svg.append(g);
+    });
+  });
+  if (cmp.length > 1) { const kl = el("div", { class: "legend" }); $("#kChart").append(kl); legend(kl, cmp.map(m => [L[m], colorOf(m)])); }
+  else $("#kChart").append(el("div", { class: "legend" }, L[cmp[0]] || ""));
+  $("#kChart").append(svg);
+  // worst pairs
+  table($("#worstTable"), ["Pair", "Scenario", "k", "Recall@GT"], DATA.worst.map(w => { const a = el("a", { href: "#s-drill" }, w.pair_id); a.onclick = () => { $("#pairPick").value = w.pair_id; drawDrill(); }; return [a, w.scenario, w.n_gt, f3(w.recall)]; }), [2, 3]);
+  // stats
+  const st = DATA.stats; if (!st.rows) return;
+  const rows = st.rows.filter(r => r.scenario === "All").map(r => [LQ(r.baseline), r.n, `${r.win} / ${r.tie} / ${r.loss}`, `${r.mean_diff >= 0 ? "+" : ""}${f3(r.mean_diff)}`, `${f3(r.diff_ci[0])} to ${f3(r.diff_ci[1])}`, r.p_holm == null ? "n/a" : r.p_holm < 0.001 ? "<0.001" : r.p_holm.toFixed(3)]);
+  table($("#statsTable"), ["Compared with", "Paired pairs", `${L[st.best_jev]} win / tie / loss`, "Mean difference", "95% CI", "p (Wilcoxon, Holm)"], rows, [1, 3, 4, 5]);
+  const sn = $("#statsNote"); sn.append(document.createTextNode(`Generated non-dev pairs, all four scenarios together. A pair counts only if both methods have a result for it, so Haiku uses the generated pairs of its subset and Distribution-based leaves out its timeouts. Per-scenario tests are in report/data.json → stats.rows. `)); sn.append(citeSpan("Source", "stats"));
+})();
+
+/* ---------- 6: drill-down ---------- */
+const DR = DRILL;
+(function initDrill() {
+  const dl = $("#pairList"); Object.keys(DR.pairs).sort().forEach(p => dl.append(el("option", { value: p })));
+  const modes = DR.modes; const seg = $("#modePick");
+  modes.forEach((m, i) => { const b = el("button", { "aria-pressed": i === 0 ? "true" : "false", "data-v": m }, L[m]); b.onclick = () => { $$("#modePick button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawDrill(); }; seg.append(b); });
+  const pick = $("#pairPick"), keys = Object.keys(DR.pairs).sort();
+  pick.value = DR.default_pair;
+  // datalist picks fire "input" (not "change"); redraw as soon as the text is an exact pair id
+  pick.addEventListener("input", () => { if (DR.pairs[pick.value]) drawDrill(); });
+  pick.addEventListener("change", () => {
+    if (!DR.pairs[pick.value] && pick.value.trim()) { const q = pick.value.trim().toLowerCase(), hit = keys.find(k => k.toLowerCase().includes(q)); if (hit) pick.value = hit; }
+    drawDrill();
+  });
+})();
+function drawDrill() {
+  const pid = $("#pairPick").value, P = DR.pairs[pid], host = $("#heat"); host.textContent = ""; $("#cellReq").textContent = "Click a cell in the grid."; $("#cellAns").textContent = "";
+  $("#heatLegend").textContent = "";
+  if (!P) { $("#pairInfo").textContent = "Unknown pair. Type part of a pair id (for example \"TPC-DI/prospect\") and pick from the list."; host.append(el("div", { class: "empty" }, "No pair selected.")); return; }
+  $$("#modePick button").forEach(b => { const has = !!P.scores[b.dataset.v]; b.classList.toggle("na", !has); b.title = has ? "" : `${L[b.dataset.v]} did not run on this pair` + (b.dataset.v.startsWith("haiku") ? ` (it ran on the ${subsetTag()} only)` : ""); });
+  const mode = $("#modePick button[aria-pressed=true]").dataset.v, M = P.scores[mode];
+  const info = $("#pairInfo"); info.textContent = `${pid} · ${P.scenario} · ${P.src.length}×${P.tgt.length} column pairs · k = ${P.gt.length} true match${P.gt.length === 1 ? "" : "es"} · `;
+  if (!M) {
+    const avail = DR.modes.filter(m => P.scores[m]).map(m => L[m]);
+    info.append(document.createTextNode(`${L[mode]} did not run on this pair.`));
+    host.append(el("div", { class: "empty" }, `${L[mode]} has no answers for this pair` + (avail.length ? `. Available: ${avail.join(", ")}.` : ".")));
+    return;
+  }
+  info.append(document.createTextNode(`Recall@GT ${f3(P.recall[mode])}`));
+  legend($("#heatLegend"), [["noul 0", "var(--seq-0)"], ["0.5", "var(--seq-4)"], ["1", "var(--seq-7)"], ["true match (ring)", "transparent", "ring"], ["in top k (dot)", "var(--ink)", "dot"]]);
+  const gt = new Set(P.gt.map(([a, b]) => a + "\u0000" + b));
+  // size cells to the box actually available. Slanted column labels need ~90px on the right and >=18px cells;
+  // denser grids switch to vertical labels so neighbouring names never overlap.
+  const lw = 190, th = 150, n = P.tgt.length, boxW = host.clientWidth || 820;
+  let padR = 90, rot = -55, cs = Math.floor((boxW - lw - padR) / n);
+  if (cs < 18) { padR = 12; rot = -90; cs = Math.floor((boxW - lw - padR) / n); }
+  cs = Math.max(12, Math.min(26, cs));
+  const fs = Math.min(11, cs - 1), W = lw + cs * n + padR, H = th + cs * P.src.length + 10;
+  const svg = s("svg", { width: W, height: H });
+  P.tgt.forEach((t, j) => { const tx = lw + j * cs + cs / 2 + (rot === -90 ? fs * 0.35 : 0); svg.append(s("text", { x: tx, y: th - 6, transform: `rotate(${rot} ${tx} ${th - 6})`, style: `font-size:${fs}px` }, t.length > 26 ? t.slice(0, 25) + "…" : t)); });
+  // top-k cells for this mode (by score, ties by order)
+  const flat = []; P.src.forEach((a, i) => P.tgt.forEach((b, j) => flat.push([M[i][j], i, j])));
+  const topk = new Set(flat.sort((x, y) => y[0] - x[0]).slice(0, P.gt.length).map(([, i, j]) => i + "," + j));
+  P.src.forEach((a, i) => {
+    svg.append(s("text", { x: lw - 6, y: th + i * cs + cs * 0.7, "text-anchor": "end", style: "font-size:11px" }, a.length > 28 ? a.slice(0, 27) + "…" : a));
+    P.tgt.forEach((b, j) => {
+      const v = M[i][j] / 100, isGT = gt.has(a + "\u0000" + b), g = s("g"), x0 = lw + j * cs, y0 = th + i * cs;
+      g.append(s("rect", { x: x0, y: y0, width: cs, height: cs, fill: "transparent" }));
+      if (isGT) {
+        // true match: ink ring at the cell edge, a surface gap, then the (smaller) shaded fill; readable in both themes
+        g.append(s("rect", { x: x0 + 1.75, y: y0 + 1.75, width: cs - 3.5, height: cs - 3.5, rx: 3, fill: "none", stroke: "var(--ink)", "stroke-width": 1.5 }));
+        g.append(s("rect", { x: x0 + 4, y: y0 + 4, width: cs - 8, height: cs - 8, rx: 1.5, fill: shade(v) }));
+      } else g.append(s("rect", { x: x0 + 1, y: y0 + 1, width: cs - 2, height: cs - 2, rx: 2, fill: shade(v) }));
+      // top-k dot uses the contrast color of the cell's own shade (white on dark steps, near-black on light ones)
+      if (topk.has(i + "," + j)) g.append(s("circle", { cx: x0 + cs / 2, cy: y0 + cs / 2, r: Math.max(1.3, Math.min(2.5, (cs - 8) / 3)), fill: inkOn(v) }));
+      hover(g, () => [[v.toFixed(2), "noul"], [`${a} → ${b}`, ""], [isGT ? "true match" : "not a match", ""]]);
+      g.style.cursor = "pointer"; g.onclick = () => showCell(P, mode, i, j, v, isGT);
+      svg.append(g);
+    });
+  });
+  host.append(svg);
+}
+function showCell(P, mode, i, j, v, isGT) {
+  if (mode === "haiku_hybrid") { $("#cellReq").textContent = "Haiku received one prompt listing all candidates for this source column (see runs/full/haiku.jsonl). Score shown: " + v.toFixed(2); return; }
+  const F = DATA.frozen.jev, prof = (p, m) => { const o = {}; if (m !== "instance") { o.name = p.name; o.inferred_type = p.type; } if (m !== "schema") o.sample_values = p.values; return o; };
+  const md = mode.replace("jev_", ""), sp = P.sprof[i], tp = P.tprof[j];
+  const state = { source_column: prof(sp, md) };
+  if (md !== "instance") { state.source_table_columns = P.src; state.candidate_table_columns = P.tgt; }
+  const q = { type: "noul", instructions: { candidate_column: prof(tp, md), question: F.wording }, criteria: F.criteria };
+  // same shape as the logged request (section 1): one request per source column, Noul ids t_<target index>
+  const req = { model: F.model, state, questions: { [`t_${j}`]: q } };
+  if (P.tgt.length > 1) req.questions["…"] = `${P.tgt.length - 1} more Nouls in this request, one per other target column`;
+  $("#cellReq").textContent = JSON.stringify(req, null, 2);
+  $("#cellAns").textContent = `noul = ${v.toFixed(2)} · ${isGT ? "true match" : "not a match"} · same request also asked about the other ${P.tgt.length - 1} target columns`;
+}
+drawDrill();
+
+/* ---------- 7: method & validity ---------- */
+(function method() {
+  const S = DATA.dev.stability, b = $("#stabBody");
+  const p1 = el("p"); p1.append(document.createTextNode("Mean Recall@GT per run: ")); Object.values(S.per_run_mean).forEach((v, i) => { if (i) p1.append(document.createTextNode(", ")); p1.append(citeSpan(f3(v), "dev:stability")); }); p1.append(document.createTextNode("."));
+  b.append(p1);
+  b.append(el("p", {}, `Per-question standard deviation of noul: median ${f3(S.sd_median)}, mean ${f3(S.sd_mean)}, 95th percentile ${f3(S.sd_p95)}, max ${f3(S.sd_max)}. ${pct(S.identical_share)} of values were identical in all three runs.`));
+  b.append(el("p", {}, `${S.pairs_changed} of ${S.pairs} pairs changed Recall@GT across runs.` + (S.changed.length ? " " + S.changed.map(c => `${c.pair_id} (k=${c.n_gt}: ${c.runs.map(f2).join(" / ")})`).join("; ") + "." : "")));
+  b.append(el("p", { class: "note" }, `Conclusion: Jev is not bit-for-bit deterministic. 95% of answers move by ${f2(S.sd_p95)} or less (standard deviation). That matters only when a true match is near-tied with a wrong one, which is most common when k = 1.`));
+  const t = $("#tieBody");
+  t.append(el("p", {}, "Jev returns noul with two decimals, so many column pairs tie. Recall@GT uses the expected value over all orderings of a tied group at the top-k cut-off (spec §8.1). This treats every method the same way."));
+  const cl = DATA.cost_latency.jev_hybrid; const TB = DATA.tie_bounds || {}; const tbRows = Object.entries(TB).map(([m, b]) => [L[m] ? LQ(m) : m, f3(b.pessimistic), f3(b.expected), f3(b.optimistic)]);
+  if (tbRows.length) { const tt = el("table"); t.append(tt); table(tt, ["Method", "Pessimistic", "Expected (used)", "Optimistic"], tbRows, [1, 2, 3]); }
+  // instance matchers: 1,000-row sample vs all rows on the dev pairs (renders nothing until the sensitivity run exists)
+  const FR = DATA.full_rows_dev || {}, frm = Object.keys(FR);
+  if (frm.length) {
+    const card = el("div", { class: "card", style: "margin-top:20px" });
+    card.append(el("div", { class: "kicker" }, "Instance matchers: 1,000-row sample vs all rows (dev pairs)"));
+    const tt = el("table"); card.append(tt);
+    table(tt, ["Method", "Pairs compared", "Recall@GT, 1,000-row sample", "Recall@GT, all rows", "All-row runs timed out", "Time per pair, 1,000 rows", "Time per pair, all rows"],
+      frm.map(m => { const r = FR[m]; return [L[m] || m, `${r.n_paired} of ${r.n_sample_all}`, f3(r.sample_1000), r.all_rows == null ? "–" : citeSpan(f3(r.all_rows), "full_rows_dev", `${L[m] || m}: ${f3(r.sample_1000)} (1,000 rows) vs ${f3(r.all_rows)} (all rows) on the same ${r.n_paired} dev pairs`), `${r.all_rows_timeout}`, secs(r.time_1000), secs(r.time_all)]; }), [1, 2, 3, 4, 5, 6]);
+    const cap = el("caption", { style: "caption-side:bottom;text-align:left;padding-top:8px", class: "note" });
+    cap.append(document.createTextNode(`Frozen settings. Both columns use only the dev pairs where the all-row run finished within ${secs(1800)}; the pairs that timed out are the largest Open Data tables. Times: matcher + CSV load, 8 runs in parallel. `)); cap.append(citeSpan("Source", "full_rows_dev"));
+    tt.append(cap);
+    $("#fullRows").append(card);
+  }
+  const FZ = DATA.frozen, WR = DATA.dev.wording.map(r => r.recall), RR = Object.values(S.per_run_mean);
+  [`Valentine matchers read a ${FZ.baselines.instance_sample_size.toLocaleString()}-row sample (today's package default); Jev and Haiku see ${FZ.jev.n_values} values per column. The paper's matchers read all rows. A sensitivity run with all rows on the dev pairs is ` + (frm.length ? "shown in the table above." : "not finished yet and is not shown."),
+   ...timeoutMethods().map(m => timeoutText(m) + " Its mean time per pair is therefore a lower bound, and the paired tests (section 5) skip those pairs."),
+   `Haiku ran on a ${subsetTag()} only, for budget. Compare it with the other methods on the same pairs (section 4, "Haiku subset" button), not with their all-pairs means.`,
+   "Today's valentine package is a rewrite (COMA is now pure Python), so re-run numbers differ from the paper's. Both are shown.",
+   `Hardware differs from the paper's (one laptop vs two 80-core VMs). Jev and Haiku time depends on network and server load; the test runs were made from this Mac after the protocol was frozen on ${FZ.frozen_at}.`,
+   "Valentine data has been public since 2021. Whether Jev or Haiku saw it in training is unknown. The NYU pairs are newer and only partly reduce this risk.",
+   "Haiku judges all candidates for a source column in one answer; Jev judges each candidate on its own.",
+   `Prompt wording, sample size, and baseline settings were tuned on 24 dev pairs, which are excluded from headline numbers. On dev, the best and worst wordings differed by ${f3(Math.max(...WR) - Math.min(...WR))} mean Recall@GT; ${RR.length} identical runs of the frozen setup differed by up to ${f3(Math.max(...RR) - Math.min(...RR))}.`,
+   "Noise in the generated pairs is synthetic (typos, abbreviations, dropped vowels).",
+   `Jev is pinned to ${FZ.jev.model}. Later versions can give different results.`].forEach(x => $("#threats").append(el("li", {}, x)));
+  (DATA.deviations || []).forEach(x => $("#devs").append(el("li", {}, x)));
+  const led = Object.entries(DATA.ledger).map(([k, v]) => { const [p, ph] = k.split(":"); return [p === "typesafe" ? "TypeSafe (Jev)" : "Anthropic (Haiku)", ph, citeSpan(usd(v), "ledger")]; });
+  const tot = {}; Object.entries(DATA.ledger).forEach(([k, v]) => { const p = k.split(":")[0]; tot[p] = (tot[p] || 0) + v; });
+  Object.entries(tot).forEach(([p, v]) => led.push([el("strong", {}, p === "typesafe" ? "TypeSafe total" : "Anthropic total"), "all", el("strong", {}, usd(v))]));
+  table($("#ledgerTable"), ["Provider", "Phase", "Spend"], led, [2]);
+  $("#repro").textContent = DATA.repro || "";
+  $("#hashes").textContent = Object.entries(DATA.scripts).map(([k, v]) => v + "  " + k).join("\n");
+})();
+syncNav();
+</script>
+</body>
+</html>

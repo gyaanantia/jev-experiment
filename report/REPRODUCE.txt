@@ -1,0 +1,25 @@
+# Rebuild every number from saved results (no API calls)
+uv run python -I scripts/40_analyze.py      # results/*.jsonl + runs/* -> report/data.json
+uv run python -I scripts/50_build_report.py # data.json + template -> report/index.html
+uv run python -I scripts/60_figures.py      # slide-ready PNG/SVG -> report/figures/
+
+# Re-run the experiments (spends money; keys in .env: TYPESAFE_API_KEY, ANTHROPIC_API_KEY)
+uv run python -I scripts/00_build_index.py           # data/pairs.parquet (needs data/raw/zenodo + data/raw/nyu)
+uv run python -I scripts/10_pilot_jev.py             # pilot: modes, packing, symmetry, concurrency
+uv run python -I scripts/11_pilot_haiku.py disabled
+uv run python -I scripts/12_pilot_baselines.py
+uv run python -I scripts/20_dev.py wording           # dev split: wording, sweep, modes, stability, haiku
+uv run python -I scripts/20_dev.py sweep W2 5 25
+uv run python -I scripts/20_dev.py modes W2 10
+uv run python -I scripts/20_dev.py stability W2 10
+uv run python -I scripts/20_dev.py haiku W2 10
+uv run python -I scripts/22_dev_baselines.py         # baseline grid on dev
+uv run python -I scripts/23_freeze_baselines.py
+JEV_CAP_USD=9.50 uv run python -I scripts/30_full_jev.py
+uv run python -I scripts/31_haiku_subset.py
+uv run python -I scripts/32_full_baselines.py
+uv run python -I scripts/32_full_baselines.py full_rows_dev
+
+# Live demo (loopback only, http://127.0.0.1:8770/; live calls spend money, cap JEV_CAP_USD else $9.90)
+uv run python -I scripts/70_demo.py                # live Jev; requests logged to runs/demo/jev_demo.jsonl
+DEMO_FAKE=1 uv run python -I scripts/70_demo.py    # rehearsal: random answers, nothing billed
